@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Secrets and local config (never commit keys or tokens)
+.env
+.env.*
+*.key
+
+# Data: downloaded papers, parsed text, vector and evidence databases
+data/*
+!data/README.md
+*.sqlite
+*.db
+chroma/
+
+# Logs and agent traces
+logs/
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+~$*
