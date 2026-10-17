@@ -26,6 +26,10 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 - **2026-10-16** · Git repository = this folder only (code, docs, own checkpoint write-ups). · Course
   materials (transcripts, slides, lab notebooks, brief) are not ours to publish and stay outside the repo.
 
+- **2026-10-17** · Tools exposed through MCP using the standalone `fastmcp` package (`from fastmcp import
+  FastMCP`) on top of mcp 2.x. · Course instructor recommends always using MCP; the environment now has
+  mcp 2.3 / fastmcp 4.1, and the old `mcp.server.fastmcp` import no longer exists in mcp 2.x.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
