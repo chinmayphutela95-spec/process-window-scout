@@ -1,2 +1,7 @@
 # Runtime dependencies for Process Window Scout.
 # Added as each part of the agent is built; pin versions once the MVP works.
+jupyter
+ipykernel
+numpy
+scipy
+matplotlib

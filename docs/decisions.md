@@ -40,6 +40,16 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
     decisions with reasons (new ranking criteria, worked examples).
   - Prompt-only baseline to be run next to the agent in the final notebook (fabricated-citation failure).
 
+- **2026-10-18** · Notebook-first build: the whole project lives in `notebooks/process_window_scout.ipynb`,
+  one Part per milestone, with test cells after each piece instead of a `src/` package and pytest. · The
+  final deliverable is a notebook run on this laptop; building and testing in the same place is easier to
+  follow while learning. Cost: the notebook gets long, so Restart & Run All must stay green and slow steps
+  cache to `data/`. The MCP server is the one file written out (`%%writefile`), since it runs as its own process.
+- **2026-10-18** · Melt-pool tool = Rosenthal point source solved exactly with the Lambert W function
+  (scipy), 316L properties averaged after Mills (2002): k 22 W/mK, rho 7800 kg/m3, cp 600 J/kgK,
+  Tm 1700 K, T0 300 K. Checked against the high-speed closed form (within 1.5 % at 800 mm/s). · Simple,
+  transparent, and depth = width / 2 is a known limitation that the band treatment already accepts.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|

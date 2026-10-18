@@ -20,7 +20,7 @@ Capstone project for the Carnegie Mellon University School of Computer Science E
 course on agentic AI systems (2026). Project type: Research Assistant.
 
 ## Status
-Early development: design phase. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
+In development: Part 1 (deterministic tools) of the project notebook is built and tested. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
 model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 | Checkpoint | Topic | Status |
@@ -35,8 +35,7 @@ model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 ## Repository layout
 ```
-src/pws/       agent code (tools, agent loop, retrieval)
-tests/         tests
+notebooks/     process_window_scout.ipynb: the whole agent, built and tested Part by Part
 docs/          architecture, decisions, model-choice log
 checkpoints/   course checkpoint write-ups and diagrams
 data/          downloaded papers and generated databases (not committed)

@@ -1,32 +1,31 @@
 # Build plan
 
 The agent is built in small milestones that follow the course modules, so each concept is learned before
-it is used. Each milestone ends with working, tested code, a short demo section in the project notebook,
-and a commit.
+it is used. Each milestone is one Part of the project notebook and ends with working code, passing test cells,
+a short demo and a commit.
 
-## Code layout
+## Code layout (notebook first)
 
 ```
-src/pws/
-  tools/        deterministic tools (units, energy density, melt-pool band, consensus, papers)
-  agent.py      ReAct loop
-  llm.py        model client (Ollama), one place to swap models
-  memory.py     run summary, evidence store, engineer feedback
-  trace.py      logging of every thought, tool call and observation
-  mcp_server.py tools exposed over MCP (fastmcp)
-tests/          pytest tests for every tool (run without any model)
 notebooks/
-  process_window_scout.ipynb   the project notebook: explanation + live demos, imports from src/pws
+  process_window_scout.ipynb   the whole project: one Part per milestone, each with explanation,
+                               code, test cells and a demo; runs top to bottom on the laptop
+data/                          cached papers, parsed text, evidence database, traces (gitignored)
 ```
 
-Logic lives in `src/pws`; the notebook only explains and demonstrates. This keeps the code testable and
-the notebook readable, in the style of the course lab notebooks.
+The final project is one Jupyter notebook that runs on this laptop, so the code is written and tested in
+the notebook itself, Part by Part, rather than in a separate package. Rules that keep it workable:
+- **Restart & Run All must always pass.** Each Part ends with test cells (`check(...)` prints `ok` or stops).
+- Slow steps (downloads, model calls) cache to `data/` and skip work that is already done.
+- Later Parts reuse earlier functions; they never redefine them.
+- The only extra file will be the MCP server (Part 6), written from the notebook with `%%writefile` because
+  MCP runs it as a separate process.
 
 ## Milestones
 
 | # | Milestone | Course link | Done when |
 |---|---|---|---|
-| M1 | Deterministic tools: `convert_units`, `energy_density`, `melt_pool_band` | Module 2 (tools) | Tools return sentences with inputs and units; pytest passes |
+| M1 ✅ | Deterministic tools: `convert_units`, `energy_density`, `melt_pool_band` | Module 2 (tools) | Tools return sentences with inputs and units; test cells pass (done 2026-10-18) |
 | M2 | Ollama + first ReAct agent using the M1 tools, with trace logging | Module 2 (ReAct) | Agent answers an energy-density question through tool calls; trace saved |
 | M3 | Paper pipeline: OpenAlex search, PDF download, parsing, evidence store | Module 3 (RAG) | 15 to 20 open-access 316L papers ingested; records with citations in SQLite |
 | M4 | Source check, consensus lookup and conflict check | Modules 3 to 4 | Each record verified against its passage; conflicts labelled with confidence |
@@ -36,7 +35,7 @@ the notebook readable, in the style of the course lab notebooks.
 | M8 | Evaluation and final notebook: prompt-only baseline vs agent | Module 7 | Extraction accuracy and baseline comparison reported |
 
 ## Conventions
-- Tools are plain Python, tested without a model before any agent uses them.
+- Tools are plain Python, tested in the notebook without a model before any agent uses them.
 - The model never writes observations; code does.
 - Every tool result states its inputs and units.
 - No API keys in the repository; local models only.
