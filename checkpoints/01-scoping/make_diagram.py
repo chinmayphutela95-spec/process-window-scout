@@ -51,7 +51,7 @@ arrow((74, 33.8), (27, 33.8), "too few comparable points → search again", rad=
 
 # Row 3: tools (three signals) + report
 box(62, 12, 37, 12, TOOL, "Tools (deterministic Python)",
-    "units · energy density\nconsensus lookup (similar settings)\nmelt-pool model, absorptivity 0.3–0.7 → band", fs=8)
+    "units · energy density\nconsensus lookup (similar settings)\nmelt-pool model, absorptivity 0.3 to 0.7 → band", fs=8)
 arrow((86, 33.6), (86, 24.4), style="<|-|>", color=EDGE[TOOL])
 box(8, 12, 40, 12, OUT, "Report",
     "recommended process window\nsupporting evidence (cited)\noutliers + likely explanation + confidence", fs=8)
@@ -70,6 +70,6 @@ ax.text(58, 5.75,
         "Vector DB (ChromaDB): paper chunks     |     Evidence DB (SQLite): cited data points"
         "     |     Run state (LangGraph)", fontsize=8, ha="center", va="center")
 
-ax.text(50, 61.2, "Process Window Scout — initial agent architecture", ha="center", fontsize=12, weight="bold")
+ax.text(50, 61.2, "Process Window Scout: initial agent architecture", ha="center", fontsize=12, weight="bold")
 plt.savefig("architecture.png", bbox_inches="tight", facecolor="white")
 print("saved architecture.png")

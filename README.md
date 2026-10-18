@@ -27,11 +27,11 @@ model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 |---|---|---|
 | 1.1 | Scoping and initial agent design | Submitted |
 | 2.1 | Agent design refinement | Submitted |
-| 3.1 | RAG and retrieval design | — |
-| 4.1 | Tree of Thought integration | — |
-| 5.1 | Multi-agent architecture | — |
-| 6.1 | Safety guardrails and human intervention | — |
-| 7.1 | Final report and presentation | — |
+| 3.1 | RAG and retrieval design | Planned |
+| 4.1 | Tree of Thought integration | Planned |
+| 5.1 | Multi-agent architecture | Planned |
+| 6.1 | Safety guardrails and human intervention | Planned |
+| 7.1 | Final report and presentation | Planned |
 
 ## Repository layout
 ```
