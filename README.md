@@ -26,7 +26,7 @@ model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 | Checkpoint | Topic | Status |
 |---|---|---|
 | 1.1 | Scoping and initial agent design | Submitted |
-| 2.1 | Agent design refinement | In progress |
+| 2.1 | Agent design refinement | Submitted |
 | 3.1 | RAG and retrieval design | — |
 | 4.1 | Tree of Thought integration | — |
 | 5.1 | Multi-agent architecture | — |

@@ -30,6 +30,16 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   FastMCP`) on top of mcp 2.x. · Course instructor recommends always using MCP; the environment now has
   mcp 2.3 / fastmcp 4.1, and the old `mcp.server.fastmcp` import no longer exists in mcp 2.x.
 
+- **2026-10-18** · Checkpoint 2.1 design refinements. · Responding to Checkpoint 1.1 feedback and Module 2:
+  - Clarification step before searching (grade, machine, layer thickness): "stainless steel" may mean
+    316L, 304L or 17-4PH, and a wrong grade spoils every later step.
+  - Conflict check: normalise → compare conditions (grade and powder, layer thickness, power, speed first;
+    then hatch, spot, machine, density method, heat treatment) → if different, label as different regimes;
+    if comparable, weigh consensus, physics band and reporting quality → confidence with a reason.
+  - Engineer feedback stored long-term as constraints (filters), corrections (down-weight records) and
+    decisions with reasons (new ranking criteria, worked examples).
+  - Prompt-only baseline to be run next to the agent in the final notebook (fabricated-citation failure).
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
