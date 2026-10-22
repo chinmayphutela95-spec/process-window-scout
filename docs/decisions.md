@@ -49,6 +49,16 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   (scipy), 316L properties averaged after Mills (2002): k 22 W/mK, rho 7800 kg/m3, cp 600 J/kgK,
   Tm 1700 K, T0 300 K. Checked against the high-speed closed form (within 1.5 % at 800 mm/s). · Simple,
   transparent, and depth = width / 2 is a known limitation that the band treatment already accepts.
+- **2026-10-22** · LLM = GLM-5.2 (FP8, about 450k token context) on a hosted vLLM server I have access to,
+  called through its OpenAI-compatible API. Replaces the 2026-10-09 "local models only (Ollama)" decision.
+  Endpoint URL, model name and key live only in `.env` (`LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`). · Far
+  stronger than any model that fits in 8 GB VRAM, and the context is large enough for whole papers; no cost
+  to me. Costs: needs the network, and paper text leaves the laptop (the papers are open access, so that is
+  acceptable).
+- **2026-10-22** · Thinking mode ON for every call, and the agent prints the model's reasoning at every step
+  (also saved in the trace). · Seeing why the agent picked a tool or a value is the point of the project for
+  me and the best debugging aid. Cost: tested on a five-word reply, 270 of 279 output tokens were reasoning,
+  so calls are slower and `max_tokens` must be generous or the answer comes back empty.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
@@ -56,6 +66,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-10-09 | (plan) Extractor / Analyst | Qwen3-8B Q4 | not yet tested | first candidate |
 | 2026-10-09 | (plan) Checker | different family ~4B (e.g. Gemma) vs Qwen3-8B self-check; Prof's AdditiveLLM2-OA | not yet tested | pending |
 | 2026-10-09 | (plan) Embeddings | Qwen3-Embedding-0.6B, bge-m3 | not yet tested | pending |
+| 2026-10-22 | All agent roles (Extractor, Checker, Analyst) | GLM-5.2 hosted vs local Qwen3-8B Q4 | GLM-5.2 reachable, key valid, thinking on/off both work | GLM-5.2, thinking on; replaces the local plan above |
 
-Constraint: 8 GB VRAM → ~4-bit quantised models ≤ ~8B; usable context about 8k to 16k tokens; one large model
-loaded at a time (agents share it with different prompts).
+Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
+usable context about 8k to 16k tokens. Still relevant if embeddings run locally.
