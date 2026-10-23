@@ -42,7 +42,8 @@ data/          downloaded papers and generated databases (not committed)
 ```
 
 ## Design principles
-- **Local models only**, run through Ollama on a laptop GPU (8 GB VRAM); chosen per role by measured comparison.
+- **Open-weight model** (GLM-5.2) served through an OpenAI-compatible endpoint, with thinking mode on and the
+  model's reasoning shown at every step. Endpoint settings come from `.env` and are never committed.
 - **The LLM never does arithmetic.** All numbers come from cited papers or deterministic Python tools.
 - **Public data only:** open-access papers with reuse-permitting licenses.
 - **Human in the loop:** no recommendation is final until the user approves it.
