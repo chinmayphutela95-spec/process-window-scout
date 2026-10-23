@@ -59,6 +59,16 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   (also saved in the trace). · Seeing why the agent picked a tool or a value is the point of the project for
   me and the best debugging aid. Cost: tested on a five-word reply, 270 of 279 output tokens were reasoning,
   so calls are slower and `max_tokens` must be generous or the answer comes back empty.
+- **2026-10-23** · Conflict check (M4) uses an explicit scoring rubric. The model judges each criterion and
+  returns its verdicts as structured fields with a short reason; code adds up the points and maps the total
+  to high, medium or low confidence. The rubric (criteria and weights) is written in the prompt so the
+  model knows what it is judging, and printed with every result so the engineer can audit it. · Checkpoint
+  2.1 feedback suggested a rubric to make the judgement transparent and repeatable. Summing in code rather
+  than letting the model add points keeps to the rule that the LLM never does arithmetic, and the same
+  verdicts always give the same score. Draft criteria: comparable supporting papers (+), contradicting
+  comparable papers (-), result inside the physics band at all absorptivities (+, small weight because the
+  model is approximate), measurement method and replicates reported (+), physics estimate outside its
+  valid range or based on broad assumptions (- for the physics term only). Weights to be tuned on test cases.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
