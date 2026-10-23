@@ -69,6 +69,14 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   comparable papers (-), result inside the physics band at all absorptivities (+, small weight because the
   model is approximate), measurement method and replicates reported (+), physics estimate outside its
   valid range or based on broad assumptions (- for the physics term only). Weights to be tuned on test cases.
+- **2026-10-23** · Retrieval design for Checkpoint 3.1: retrieval is required even though GLM-5.2 has a
+  very long context, because the context is re-sent at every agent step (cost and latency), facts in the
+  middle of long contexts get missed, and the source check needs exact paper and page citations. Three
+  levels: OpenAlex finds papers; semantic search over page-tagged chunks finds passages; SQL queries the
+  extracted numbers. Chunks of about 250 words with 50 words overlap, tables kept whole; ChromaDB with an
+  alloy metadata filter; top 5 with at most 2 chunks per paper and MMR (lambda about 0.7). · Lab 3.1's
+  MiniLM truncates at 256 tokens and would cut parameter tables; the alloy filter addresses the main
+  failure mode (a 304L or wrong-layer passage outranking the right 316L table).
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
@@ -76,6 +84,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-10-09 | (plan) Extractor / Analyst | Qwen3-8B Q4 | not yet tested | first candidate |
 | 2026-10-09 | (plan) Checker | different family ~4B (e.g. Gemma) vs Qwen3-8B self-check; Prof's AdditiveLLM2-OA | not yet tested | pending |
 | 2026-10-09 | (plan) Embeddings | Qwen3-Embedding-0.6B, bge-m3 | not yet tested | pending |
+| 2026-10-23 | Embeddings | Qwen3-Embedding-0.6B (local GPU, about 1.2 GB fp16) vs all-MiniLM-L6-v2 (course lab) | chosen before testing: no 256-token limit, runs locally; recall@5 comparison planned | Qwen3-Embedding-0.6B |
 | 2026-10-22 | All agent roles (Extractor, Checker, Analyst) | GLM-5.2 hosted vs local Qwen3-8B Q4 | GLM-5.2 reachable, key valid, thinking on/off both work | GLM-5.2, thinking on; replaces the local plan above |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
