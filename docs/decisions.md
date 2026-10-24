@@ -86,6 +86,13 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 - **2026-10-24** · search_passages draws 60 candidates (not 20). · For the demo question 19 of the 20
   nearest chunks came from one paper, so the per-paper cap ran out of options. Also observed: a 316L DED
   table from a review paper is retrieved for an LPBF question, so a process label is needed next.
+- **2026-10-24** · Demo question names the layer thickness (30 µm), and a deterministic `stated_conditions()`
+  lookup adds, for each source paper, the sentences that state layer thickness, hatch spacing or spot size
+  with a number (Methods first, sentences citing other work skipped). · Power and speed are meaningless
+  without layer thickness; papers state it in Methods while results sit in tables, and semantic search
+  (even restricted to chunks containing "layer thickness") kept returning the table without its condition.
+  With the lookup the grounded answer reports layer thickness and hatch for every result and notes that
+  90 vs 120 µm hatch makes two 30 µm results not directly comparable.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
