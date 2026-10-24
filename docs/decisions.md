@@ -77,6 +77,15 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   alloy metadata filter; top 5 with at most 2 chunks per paper and MMR (lambda about 0.7). · Lab 3.1's
   MiniLM truncates at 256 tokens and would cut parameter tables; the alloy filter addresses the main
   failure mode (a 304L or wrong-layer passage outranking the right 316L table).
+- **2026-10-24** · Paper source switched from OpenAlex + PDF to **Europe PMC full-text XML**. · Publishers
+  blocked 23 of 25 automated PDF downloads (HTTP 403); Europe PMC serves open-access full text through an
+  official API with tables intact. Citations are section or table instead of page.
+- **2026-10-24** · Library v1: 5 CC BY 316L papers with a parameter table plus one deliberate 25CrMo4
+  distractor; alloy label from the title first, then mention counts (a 25CrMo4 paper mentioned 316L).
+  Without the alloy filter the distractor's table ranked 7th for the 316L question; with it, never.
+- **2026-10-24** · search_passages draws 60 candidates (not 20). · For the demo question 19 of the 20
+  nearest chunks came from one paper, so the per-paper cap ran out of options. Also observed: a 316L DED
+  table from a review paper is retrieved for an LPBF question, so a process label is needed next.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
