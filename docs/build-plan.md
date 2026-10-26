@@ -35,6 +35,8 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 | M8 | Evaluation and final notebook: prompt-only baseline vs agent | Module 7 | Extraction accuracy and baseline comparison reported |
 
 ## Conventions
+- Prefer established frameworks over hand-written code (LangGraph for the agent loop and multi-agent flow,
+  LangChain tool wrappers, ChromaDB, fastmcp), but explain each concept in the notebook before using it.
 - Tools are plain Python, tested in the notebook without a model before any agent uses them.
 - The model never writes observations; code does.
 - Every tool result states its inputs and units.

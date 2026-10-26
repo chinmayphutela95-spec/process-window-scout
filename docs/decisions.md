@@ -93,6 +93,17 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   (even restricted to chunks containing "layer thickness") kept returning the table without its condition.
   With the lookup the grounded answer reports layer thickness and hatch for every result and notes that
   90 vs 120 µm hatch makes two 30 µm results not directly comparable.
+- **2026-10-26** · Model name set in the code (`GLM-5.2` default), server address and key stay in `.env`;
+  `.env.example` added for anyone running the notebook. · Course guidance: graders should run the same model;
+  the private endpoint details must never be committed.
+- **2026-10-26** · Prefer established frameworks and libraries over hand-written code from here on
+  (LangGraph for the agent loop and multi-agent flow, LangChain tool wrappers, ChromaDB, fastmcp), keeping
+  each concept visible and explained in the notebook. · Less custom code to debug and maintain, closer to
+  how agents are built in practice, and recommended by the course for multi-agent work.
+- **2026-10-26** · MMR kept at lambda 0.7. · Test on 8 questions (no LLM): compared with plain ranking
+  (lambda 1.0) under the same 2-per-paper cap, the 5 selected passages changed in 8 of 8 questions and drew
+  on a different number of papers in 3 of 8 (demo question: 3 papers became 4). The cap alone does not
+  explain the diversity.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |

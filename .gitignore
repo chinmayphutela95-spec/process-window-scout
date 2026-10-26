@@ -10,6 +10,7 @@ venv/
 # Secrets and local config (never commit keys or tokens)
 .env
 .env.*
+!.env.example
 *.key
 
 # Data: downloaded papers, parsed text, vector and evidence databases
