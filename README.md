@@ -20,14 +20,14 @@ Capstone project for the Carnegie Mellon University School of Computer Science E
 course on agentic AI systems (2026). Project type: Research Assistant.
 
 ## Status
-In development: Part 1 (deterministic tools) of the project notebook is built and tested. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
+In development: Part 1 (deterministic tools), the GLM-5.2 client and Part 3a (retrieval over open-access papers) are built and tested. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
 model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 | Checkpoint | Topic | Status |
 |---|---|---|
 | 1.1 | Scoping and initial agent design | Submitted |
 | 2.1 | Agent design refinement | Submitted |
-| 3.1 | RAG and retrieval design | Planned |
+| 3.1 | RAG and retrieval design | Submitted |
 | 4.1 | Tree of Thought integration | Planned |
 | 5.1 | Multi-agent architecture | Planned |
 | 6.1 | Safety guardrails and human intervention | Planned |
