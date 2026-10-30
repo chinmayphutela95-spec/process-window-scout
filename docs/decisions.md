@@ -104,6 +104,22 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   (lambda 1.0) under the same 2-per-paper cap, the 5 selected passages changed in 8 of 8 questions and drew
   on a different number of papers in 3 of 8 (demo question: 3 papers became 4). The cap alone does not
   explain the diversity.
+- **2026-10-30** · Evidence quality becomes the centre of the next milestone (M4) and Checkpoint 4.1. ·
+  All three graders (1.1, 2.1, 3.1) asked the same thing: how conflicting findings are resolved, how source
+  reliability is judged, and whether extracted conditions are checked automatically. Planned design:
+  - **Automated extraction checks (code, before any judgement):** (1) the value must appear verbatim in its
+    cited passage (source check); (2) internal consistency: when a paper reports energy density, recompute
+    P / (v h t) from its stated conditions and compare (Table 2 of the nozzle study: 140 / (100 x 0.12 x 0.03)
+    = 389 J/mm3, as printed); (3) required conditions present: alloy, process (PBF-LB, not DED), layer
+    thickness, hatch spacing, power, speed; missing ones are flagged, never guessed.
+  - **Source reliability per record:** primary data from the study's own experiments ranks above values a
+    paper quotes from other work or a review table; density method and number of samples reported; same
+    process and alloy as the request; passes the consistency check.
+  - **Conflict resolution:** compare only comparable records (same layer thickness and hatch band); if
+    comparable records still disagree, a Tree of Thought step proposes explanations (powder, density method,
+    machine and spot size, scan strategy, unit or reporting error), retrieves evidence for each, scores them
+    with the explicit rubric (model judges each criterion, code sums the points), and reports the result with
+    a confidence level. Both values stay visible to the engineer; nothing is silently dropped.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
