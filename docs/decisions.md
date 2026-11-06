@@ -120,6 +120,22 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
     machine and spot size, scan strategy, unit or reporting error), retrieves evidence for each, scores them
     with the explicit rubric (model judges each criterion, code sums the points), and reports the result with
     a confidence level. Both values stay visible to the engineer; nothing is silently dropped.
+- **2026-11-06** · How the ToT thresholds and evidence types decide the outcome (answer to the 4.1 feedback).
+  The search stops early only when an explanation is clearly ahead; otherwise it runs to depth 2 and the
+  final scores fall into one of three bands:
+  - **Resolved** (high confidence): best score >= 6 and lead >= 2 over the next.
+  - **Competing** (medium): best score >= 3 but below 6, or the lead is under 2. The report shows every
+    explanation within 2 points of the best, side by side, with the check that would separate them.
+  - **Unresolved** (low): best score < 3. Both original values are shown with no explanation preferred.
+  Points say whether the evidence supports an explanation; **evidence tiers** say how much to trust it:
+  A = direct experimental observation reported in the study itself (measured porosity type, micrographs,
+  stated method); B = deterministic code checks on the reported numbers; C = consensus of comparable studies;
+  D = physics estimate (weak, withheld outside its valid range). An explanation can only be Resolved if it has
+  at least one tier A or B item; physics-only support caps it at low. When two explanations score within
+  2 points, the one with the higher best tier leads, but the other stays visible as the runner-up with the
+  discriminating check (for example cross-section images for keyhole pores versus a CT or Archimedes density
+  comparison). Nothing within the margin is dropped. · Grader asked how the thresholds interact and how
+  experimental evidence is weighed against a physics estimate without losing a valid alternative.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
