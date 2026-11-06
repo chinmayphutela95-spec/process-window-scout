@@ -153,6 +153,18 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   Evaluate: multi-agent vs single agent on the same papers (accuracy per field, planted errors caught, calls,
   run time). · Module 5 lecture deck p. 12 rule, Lab 5.1 guidance (minimal set, cap loops, benchmark).
 
+- **2026-11-06** · Coordination skeleton built (notebook Part 5, stub agents, tested offline). Choices made while
+  building: the evidence table uses an **upsert reducer** `merge_records` (same record id updates, new id appends)
+  instead of `operator.add`, so the Checker's verdict and a Reader's retry update one record rather than
+  duplicating it; `operator.add` stays for the trace log. **Field ownership is enforced in code** (`write()` refuses
+  fields an agent does not own; a Reader may only set status "extracted"). Conflict rule in code: verified records at
+  the requested layer thickness whose energy densities are within 10 % but densities differ by more than 1
+  percentage point (first values, to be tuned on real records). Window = span of verified records reaching the
+  target, ids as citations. Agents' models are arguments of `build_scout_graph`, so M2b/M4 plug in GLM-5.2 without
+  rewiring; offline tests use a `ScriptedModel` with fixed answers per (paper, attempt). In-memory checkpointer
+  for now; SQLite later for pauses across restarts. `recursion_limit` 25 and `max_concurrency` 3 in every run
+  config. · Module 5 squad lab patterns (reducer, Send, ScriptedModel, interrupt), Checkpoint 5.1 design.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
