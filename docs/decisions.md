@@ -136,6 +136,22 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   discriminating check (for example cross-section images for keyhole pores versus a CT or Archimedes density
   comparison). Nothing within the margin is dropped. · Grader asked how the thresholds interact and how
   experimental evidence is weighed against a physics estimate without losing a valid alternative.
+- **2026-11-06** · Multi-agent architecture (Checkpoint 5.1): **three LLM agents plus a Coordinator written in
+  code**, all in one LangGraph state graph. Reader (one per paper, parallel via `Send`, max 3 at a time),
+  Checker (code checks first, then judges primary vs quoted data; sees record and passage, never the Reader's
+  reasoning), Analyst (ToT generator and critic, only on conflicts flagged by code, max 3 per run).
+  Coordinator = rule-based supervisor: request completeness, search plan, routing, limits; no model call.
+  Communication only through the shared evidence table in graph state (records list with an `operator.add`
+  reducer for the parallel Readers; each agent writes only its own fields; edges pass IDs and flags, not
+  text). Protocols by stakes: one-way Coordinator to Reader, two-way Checker and Reader (structured reason,
+  one retry, then "not verified", never silently accepted), brainstorming only inside the Analyst. Approval
+  via `interrupt()` with a SQLite checkpointer; set `recursion_limit` and `max_concurrency` in the run config.
+  Dropped roles: Planner, Searcher, Physics agent, Writer (fail the module's split rule: different tools or
+  knowledge, parallel, independent check). LangGraph over CrewAI: routing depends on structured check
+  results and needs explicit loops with hard limits; CrewAI's hierarchical manager lets an LLM choose the
+  order. Same model (GLM-5.2) for all agents accepted for factual work; independence comes from code checks.
+  Evaluate: multi-agent vs single agent on the same papers (accuracy per field, planted errors caught, calls,
+  run time). · Module 5 lecture deck p. 12 rule, Lab 5.1 guidance (minimal set, cap loops, benchmark).
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
