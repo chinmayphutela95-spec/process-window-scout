@@ -18,8 +18,8 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 - **Restart & Run All must always pass.** Each Part ends with test cells (`check(...)` prints `ok` or stops).
 - Slow steps (downloads, model calls) cache to `data/` and skip work that is already done.
 - Later Parts reuse earlier functions; they never redefine them.
-- Extra files only where a separate process needs them: the MCP server (Part 5), written from the notebook
-  with `%%writefile`, and an optional small UI (Streamlit) at the end.
+- Extra files only where a separate process needs them: the MCP server (Part 8.15), written from the notebook
+  with `%%writefile` to `data/mcp/` (gitignored, regenerated on every run), and an optional small UI (Streamlit) at the end.
 
 ## Milestones (updated 2026-10-30 after the Checkpoint 4.1 design)
 
@@ -30,8 +30,8 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 | M3a | 3a | Retrieval: Europe PMC library (5 x 316L + 1 distractor), chunks, Qwen3 embeddings in ChromaDB, `search_passages` (MMR, alloy filter, max 2 per paper), `stated_conditions`, with/without demo. Then (3a.9 to 3a.11) the frozen library v2 (10 x 316L + distractor) with LangChain splitter, Chroma and MMR retriever, and answer-key review sheets | 3.1 | ✅ 2026-10-24, library v2 ✅ 2026-11-07 |
 | M2b | 2 | ReAct agent in **LangGraph** (`langchain-openai` to install; check that GLM's reasoning survives the wrapper) with tools: `search_passages`, `stated_conditions`, Part 1 tools; reasoning printed at every step; trace saved | 4.1 | ✅ 2026-11-07 as the single-agent baseline (notebook Part 4: `create_agent` with four tools) |
 | M3b | 3b | **Evidence table + automated checks** (graders' main ask): extract records (alloy, process, power, speed, hatch, layer, density, method, source passage) with structured output into SQLite; code checks: value verbatim in its passage, energy density recomputed vs reported, required conditions present, primary vs quoted data | 4.1 | ✅ 2026-11-07 (Parts 5 and 6: Reader with reading units, code Checker with the column check, planted errors 5 of 5, SQLite evidence table in 9.1) |
-| M4 | 4 | **Tree of Thought for conflicts** (LangGraph subgraph): conflict flagging on comparable records; generator, critic with the rubric (model judges, code sums), beam 2, depth 2, evidence-gated scoring; test case 97.76% vs 99.97% at 30 µm | 4.1 | ✅ 2026-11-07 (Part 7, run in the graph in 8.11). Open: retrieval per branch, thresholds |
-| M5 | 5 | Multi-agent graph (design in Checkpoint 5.1): Coordinator in code + Reader (parallel, `Send`), Checker, Analyst sharing one evidence table (`operator.add` reducer); one retry then "not verified"; `recursion_limit` and `max_concurrency` set; tools over MCP with fastmcp, each agent only its own. Skeleton with stub nodes and a scripted fake model can be built first and filled by M2b, M3b, M4 | 5.1 | ✅ 2026-11-07 with the real Reader, Checker and Tree of Thought Analyst (Part 8). Still: MCP tools, multi vs single agent accuracy |
+| M4 | 4 | **Tree of Thought for conflicts** (LangGraph subgraph): conflict flagging on comparable records; generator, critic with the rubric (model judges, code sums), beam 2, depth 2, evidence-gated scoring; test case 97.76% vs 99.97% at 30 µm | 4.1 | ✅ 2026-11-07 (Part 7, run in the graph in 8.11). Session D: quote per side, code facts only when they test the cause, both papers' method sentences for every branch, gate fixed. Open: the critic still judges whether a quote supports the cause |
+| M5 | 5 | Multi-agent graph (design in Checkpoint 5.1): Coordinator in code + Reader (parallel, `Send`), Checker, Analyst sharing one evidence table (`operator.add` reducer); one retry then "not verified"; `recursion_limit` and `max_concurrency` set; tools over MCP with fastmcp, each agent only its own. Skeleton with stub nodes and a scripted fake model can be built first and filled by M2b, M3b, M4 | 5.1 | ✅ 2026-11-07 with the real Reader, Checker and Tree of Thought Analyst (Part 8), and since Session D conflicts at every layer, windows per density method, widening (8.14) and tools over MCP (8.15). Still: multi vs single agent accuracy (needs the answer key) |
 | M6 | 6 | Guardrails: clarification step (alloy grade, machine, layer thickness), human approval with a LangGraph interrupt, engineer-feedback memory | 6.1 | ✅ 2026-11-07 (Part 9: clarification interrupt, SQLite checkpointer, SqliteStore feedback memory) |
 | M7 | 7 | Evaluation: frozen test set (frozen before tuning), extraction accuracy per (paper, field), prompt-only baseline vs agent, ToT vs single call; optional Streamlit UI; demo video recorded separately | final | 🟡 scoring code ready (10.1), cost comparison and ToT vs single call (10.2). Waits for the answer key |
 
@@ -39,7 +39,7 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 is measured honestly beats a large unfinished one.
 
 The target structure of the final notebook (Parts 0 to 11, each with question, course concept and framework
-feature) is in `docs/notebook-outline.md`. The renumbering happens in a later round.
+feature) is in `docs/notebook-outline.md`, with the documentation standard agreed on 2026-11-07.
 
 ## Conventions
 - Prefer established frameworks over hand-written code (LangGraph for the agent loop and multi-agent flow,

@@ -292,6 +292,55 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   context. `SqliteStore` needs an autocommit connection (`isolation_level=None`). Every SQLite file is opened with a test
   write and retried (the Windows read-only lesson of 0.3).
 
+- **2026-11-07** · Reader fixes, made together in one rerun (5.1): the schema labels lengths `µm` instead of `um`, tables
+  whose header prints a mean or average come with the focus table (L02's Table 5) and rule 5 says the mean may sit in
+  another table, and the paper's own sentences on how it measured density come with every call (headed `method`) with a
+  rule asking for the method of each value. · The first run tagged 32 µm values as mm (all caught by the range check),
+  gave L02 27 replicate records because its means were in a table the Reader never saw, and left L04's methods blank.
+  Result (v2 papers, strict rule, 8.13): records 190 to 135 (L02 27 to 9 with the printed means, L08 101 to 64), unit slips at the first attempt 32 to 1 (a quoted literature row of L09), records sent back 33 to 6, L04's three porosities now "image analysis". Under the strict rule L04 vs L07 is no longer a conflict (1 to 0). L08 Table 4 (16 samples x 4 values) is left out: every call on it ran past the 20-minute timeout (twice whole, once per half), and a unit that never answers cannot be replayed offline. Its as-built values are also in Table 2 and its HIP values for six samples in Table 5, the answer-key table.
+- **2026-11-07** · The single agent (Part 4) keeps the record schema it was run with (label `um`), defined as a copy in
+  4.2. · Rerun with the new label, its eleventh call ran past the 20-minute timeout in one runaway answer. It is a fixed
+  comparison point, so I kept it as run. A call that times out now stops the agent, not the notebook.
+- **2026-11-07** · Comparability, active rule (Chinmay's decision, evening): methods may differ inside a conflict pair, the
+  difference is tagged as a candidate cause, conflicts are searched at every layer thickness, at most 3 pairs across
+  papers go to the Analyst (requested layer first, then the largest gap), same-sample pairs stay method spread. The
+  morning's strict rule is kept as `STRICT_RULE` for counting. · After the Reader fixes the strict rule dropped L04 vs
+  L07 (image analysis against Archimedes), so the agent would never have explained the largest disagreement in the
+  library. A method difference is a cause to explain, not a reason to look away. Tolerances (10 % power and speed, 15 %
+  hatch) stay a judgement, with a sensitivity table in 8.12: 58 comparable pairs, 12 conflicts, 3 across papers at 10 / 15 %. At 5 % no pair across papers remains, at 20 / 25 % there are 28, so the choice matters and is shown as judgement.
+- **2026-11-07** · Tree of Thought scoring (Chinmay's decision, evening): a verified quote counts per side of the pair (+3
+  from each paper), a code fact earns points only if it tests the explanation (B3 methods for "method", B5 the lower
+  record's own paper data and D3 the melt-pool band for "regime", B4 for "reporting"), and consensus and energy density
+  are context only. Both papers' method and condition sentences are given to every branch and to the single call.
+  Thresholds unchanged. · Session C showed that a method explanation could never reach Resolved (+5 at most) and that the
+  method branch missed L04's method sentence because it depended on its own searches. Results: both known controls now reach "method", Resolved +8 (Competing +5 before). E06 vs L06 S9 (Archimedes 96.3 % against image analysis 99.53 %): method, Resolved +8. E06 vs L06 S9 Archimedes: regime +5, Competing. L04 vs L07: Competing, reporting +6 against method +5 (one sentence of L04 says it also used Archimedes, which cuts against "method"), single call: method (high). The first run of the new rubric exposed two gate bugs, fixed the same evening: quotes with an appended chunk id or a curly apostrophe were rejected, and a row of table numbers was accepted as a quote. The gate now accepts sentences only and ignores typography and appended ids.
+- **2026-11-07** · One window per density method (Chinmay's decision, evening), side by side with record and paper counts,
+  Archimedes first. The first window with a known method gives the headline bounds, the others are listed next to it.
+  · Showing the windows side by side makes the method effect visible instead of hiding it in "supporting" records.
+  30 µm, 99.5 %: Archimedes 165 to 220 W, 725 to 800 mm/s, 70 to 120 µm from 2 records (E03, L07), image analysis 150 to 250 W, 700 to 1100 mm/s from 8 records in 3 papers.
+- **2026-11-07** · Library extension (Chinmay's decision, evening): six more CC BY 316L PBF-LB papers at 30 µm (E01 to E06,
+  3.12), chosen the same way as v2 (Europe PMC full text, solid parts, density with parameters in a table or text;
+  lattices, foams and a mislabelled superalloy paper left out). They feed only the window, the conflicts and the
+  consensus, have their own Chroma collection (`papers_ext`) and short names, and are never scored. v2, its collection,
+  the review sheets and the answer key are unchanged. · A window from one or two records is not a recommendation.
+  E01 PMC9317792, E02 PMC8779437, E03 PMC10934583, E04 PMC9573657, E05 PMC12387858, E06 PMC10935024: 14 records, 7 verified (E02, E04 and E05 are incomplete: the Reader gave their densities but left power, speed and hatch empty. E05's parameter table heads its columns "P (W)" without the word power, so `parameter_tables` missed it and it never reached the context, an open fix). Verified records meeting the 30 µm request: 7 on v2, 10 with the extension.
+- **2026-11-07** · Widening (capability 26, 8.14): when fewer than 10 verified records meet the request (requested layer and
+  at least the target density), the Coordinator searches once at the nearest thinner and thicker layer thickness among
+  the verified records (each at most 50 % away) and marks those records `scope = "adjacent"`. They are shown with the
+  windows and never bound them. · Checkpoint 2.1 promised it, 5.1 limits it to one extra search round (the graph has no
+  edge back into `widen`). I count records that meet the request rather than all records at the thickness (2.1's
+  wording), because only those can support a window. With the extension exactly 10 records meet 316L, 30 µm, 99.5 %, so the graph does not widen. On v2 alone 7 do, and the wider search adds 20 µm (L10) and 40 µm (L09), both shown in 8.14.
+- **2026-11-07** · MCP (capability 12, 8.15): one fastmcp server file written by the notebook (`%%writefile`), run as its
+  own process over HTTP on 127.0.0.1, serving `search_passages`, `stated_conditions`, `energy_density` and
+  `melt_pool_band`. Each agent gets only its own tools (`AGENT_TOOLS`), `consensus_lookup` stays a local tool because it
+  reads the evidence table in the notebook's process. · `langchain-mcp-adapters` 0.3.2 needs mcp below 2.0 while fastmcp
+  4.1 needs mcp 2.x (pip dry run), so a 15-line bridge does what its `load_mcp_tools` does (fastmcp `Client` plus
+  `StructuredTool` with the server's schema). HTTP instead of stdio so the server and its embedding model start once.
+  The calculation formulas now exist twice (Part 1 and the server), so a parity test checks they agree. The Analyst agent (`create_agent`, its three tools) called `energy_density` twice and `melt_pool_band` once through the server, and the server's call log shows them under its own process id. Server start about 8 s, first search loads the embedding model in about 17 s.
+- **2026-11-07** · Documentation standard (Chinmay's request): every rule and threshold is stated with its value, reason,
+  evidence and limitations where it is used. Part 0 has a "how the pieces fit" narrative and a rules and thresholds
+  table, and each Part ends with "what this step showed". Added to `docs/notebook-outline.md`.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
@@ -304,6 +353,8 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-11-07 | Reader (structured extraction) | one call per paper vs one call per density table (reading units), both GLM-5.2 json_schema with thinking on | per paper: L08 timed out twice (600 s). Per table: 24 of 24 calls parsed, median 12.5 s, 190 records, 32 unit tags wrong (µm as mm), fixed on the retry | reading units, json_schema |
 | 2026-11-07 | Single-agent baseline (Part 4) | `create_agent` + 4 tools + `ToolStrategy` | 15 calls, 355 s, 434k in / 87k out tokens, 24 records at 30 µm | kept as the baseline for capabilities 30 and 32 |
 | 2026-11-07 | Analyst (Part 7) | Tree of Thought (generator + critic, GLM-5.2 json_schema, 16,000 tokens) vs one thinking call | known cases: both pick the right cause. L04 vs L07: tree regime (Resolved), single call method (low) | tree kept, retrieval per branch and thresholds to tune |
+| 2026-11-07 | Reader with the three fixes (µm label, mean tables, method sentences) | same GLM-5.2 json_schema Reader, one call per density table | 23 of 24 units answered in 7 to 82 s, L08 Table 4 ran past 20 minutes three times (left out) | kept, L08 Table 4 open |
+| 2026-11-07 | MCP client for LangChain | `langchain-mcp-adapters` 0.3.2 vs own bridge (fastmcp `Client` + `StructuredTool`) | adapter needs mcp below 2.0, fastmcp 4.1 needs mcp 2.x | own 15-line bridge |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.
