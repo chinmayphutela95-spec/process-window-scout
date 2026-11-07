@@ -23,8 +23,8 @@ course concept visible somewhere in the notebook.
 | 5 | What exactly does each paper report? (Reader) | Structured extraction, "the model reads, code decides", context budget (M5) | `with_structured_output(Record)` per paper | 13, 34 |
 | 6 | Which records can we trust? (Checker) | Verification, evaluator, consensus, physics as weak evidence | Plain code checks wrapped as tools; consensus and physics band; outlier rule | 11, 14, 15, 17, 18 |
 | 7 | Why do comparable studies disagree? (Analyst) | Tree of Thought: generator, critic, beam, rubric, pruning (M4) | LangGraph subgraph, `Send` for branches, structured critic output | 19, 20, 31 |
-| 8 | How do the agents work together? | Multi-agent coordination and communication (M5), MCP (M2, M4) | `StateGraph`, reducers, `Send`, conditional edges, `RetryPolicy`, `recursion_limit`; tools served with fastmcp and loaded with `langchain-mcp-adapters` | 12, 16, 21 |
-| 9 | When must a human decide? (guardrails) | Human in the loop, guardrails, memory types (M2, M6) | `interrupt` and `Command(resume=...)` for clarification and approval, SQLite checkpointer, LangGraph `Store` for engineer feedback | 22 to 26 |
+| 8 | How do the agents work together? | Multi-agent coordination and communication (M5), MCP (M2, M4) | `StateGraph`, reducers, `Send`, conditional edges, `RetryPolicy`, `recursion_limit`; tools served with fastmcp over HTTP and wrapped as LangChain tools (`langchain-mcp-adapters` needs mcp below 2.0, see 8.15) | 12, 16, 21, 26 |
+| 9 | When must a human decide? (guardrails) | Human in the loop, guardrails, memory types (M2, M6) | `interrupt` and `Command(resume=...)` for clarification and approval, SQLite checkpointer, LangGraph `Store` for engineer feedback | 22 to 25 |
 | 10 | Does it actually work? (evaluation) | Benchmarking, baselines, "did the extra coordination pay for itself?" (M5) | Traces and cache for cost and latency; scoring against the answer key | 27 to 32 |
 | 11 | End-to-end demo for the video | All of the above | One request through the full graph, trace shown | 34 |
 
@@ -35,3 +35,18 @@ Notes:
   reproducible, add the LangChain equivalents next to them, and let the chunking experiment compare them.
 - Fine-tuning (Module 5) is not used: one paragraph in Part 10 explains why RAG fits changing literature
   better than tuning.
+
+## Documentation standard (agreed 2026-11-07)
+
+The notebook must read as one logical argument from request to approved window, so every rule and threshold is
+explained where it is used:
+
+- **In each Part:** state the rule in plain words, give each parameter with the reason it has that value (or say it is
+  engineering judgement and point to the check that shows its effect, for example the tolerance sensitivity table in
+  8.12), say what evidence shows it works, and name its known limitations and failures honestly. A worked case that
+  went wrong and was fixed (L04 vs L07) is told in full.
+- **Near the top (Part 0):** a short "how the pieces fit" narrative (request, clarification, retrieval, Reader,
+  Checker, conflicts, Analyst, window, approval) and a "rules and thresholds" table: rule, value, reason, where it is
+  defined, decision date in `docs/decisions.md`.
+- **At the end of each Part:** a two- or three-line "what this step showed" summary that leads into the next Part.
+- **Voice:** Chinmay's, first person, plain, no em or en dashes, no semicolons.
