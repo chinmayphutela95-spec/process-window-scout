@@ -4,7 +4,7 @@ Every capability promised in the course checkpoints, where it lives in the noteb
 shows it works. The final report and video should point to the "Evidence" column. Status: ✅ built and tested
 on real data, 🟡 built but only on made-up data or partly, ⬜ not built yet.
 
-Last updated 2026-11-07 (after Session D). Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 11).
+Last updated 2026-11-07 (after Session E). Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 11).
 
 ## Library and retrieval
 
@@ -14,7 +14,7 @@ Last updated 2026-11-07 (after Session D). Notebook column uses the Parts of `do
 | 2 | Parse full text including tables | 3.1 | 3.1, 3.11 | Parsed table next to the original | ✅ tables also rendered to HTML with merged cells for the answer-key sheets |
 | 3 | Alloy label + metadata filter (similarity trap) | 3.1 | 3.6 | Distractor ranks 7th without the filter | ✅ |
 | 4 | Chunking (250 words, 50 overlap, tables whole) | 3.1 | 3.3 | Chunk counts | ✅ |
-| 5 | Chunking experiment (chunk size, tables whole vs split) | new | 3.3, 3.10 | Retrieval recall@5 against the answer key | ⬜ both chunkers now exist (v1 fixed windows, v2 LangChain recursive splitter), comparison needs the answer key |
+| 5 | Chunking experiment (chunk size, tables whole vs split) | new | 10.6 | Retrieval recall@5 against the answer key | 🟡 built (Session E): recall@5 for v1 windows vs v2 splitter, tables whole vs split (0.71 to 0.77). Runs on a provisional key of Checker-verified v2 records and switches to `eval/answer_key.csv` once it has rows |
 | 6 | Qwen3 embeddings, ChromaDB, MMR, max 2 per paper | 3.1 | 3.4, 3.5, 3.10 | MMR changed 8 of 8 result lists | ✅ v1 hand-written. v2 with LangChain `Chroma` + MMR retriever + alloy filter, cap applied after MMR |
 | 7 | Stated-conditions lookup (layer thickness) | 3.1 | 3.7, 3.9 | Conditions printed per paper | ✅ works on both libraries |
 | 8 | With vs without retrieval, invented citations caught | 2.1, 3.1 | 3.8 | Two answers side by side; citation check | ✅ invented citations checked in code: none of the 4 studies exists in Crossref as written, every grounded citation points to a real passage |
@@ -25,21 +25,21 @@ Last updated 2026-11-07 (after Session D). Notebook column uses the Parts of `do
 |---|---|---|---|---|---|
 | 9 | `convert_units`, `energy_density`, `melt_pool_band` | 2.1 | 1 | 26 checks, depth band plot | ✅ |
 | 10 | `consensus_lookup` (records at similar settings) | 2.1 | 6.6 | Query result for a test record | ✅ `consensus_lookup` as a LangChain tool on `comparable()` |
-| 11 | Source check (value verbatim in its passage) | 2.1, 5.1 | 6.1 to 6.3, 8.4 | Pass and fail cases | ✅ 190 real records, plus the same-row check. Planted: value not in passage and value from another sample caught |
+| 11 | Source check (value verbatim in its passage) | 2.1, 5.1 | 6.1 to 6.3, 8.4 | Pass and fail cases | ✅ verbatim, same-row and column checks. Headers read by word or by symbol and unit ("P (W)"), unit alone as fallback. 0 false alarms on 134 v2 records |
 | 12 | Tools served over MCP (fastmcp), each agent only its own | 2.x, 5.1 diagram | 8.15 | Agent calling a tool through the MCP server | ✅ fastmcp server written with `%%writefile`, own process over HTTP, 4 tools, per-agent tool lists (`AGENT_TOOLS`), parity test against Part 1, Analyst agent called `energy_density` and `melt_pool_band` through the server (call log with the server's process id). `langchain-mcp-adapters` replaced by a 15-line bridge (needs mcp below 2.0) |
 
 ## Agents and coordination
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | 4.1, 5.1 to 5.4 | Records for the real papers with passage IDs | ✅ after the Reader fixes (11-07): 135 records from v2 (23 units, L08 Table 4 left out after three timeouts) + 14 from the extension, µm slips 32 to 1, L02 means instead of replicates, method per value. Before/after in 8.13. Accuracy: see 28 |
+| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | 4.1, 5.1 to 5.4 | Records for the real papers with passage IDs | ✅ after the Reader fixes: 134 records from v2 + 14 from the extension, µm slips 32 to 1, L02 means, method per value, parameter tables named by symbol and unit (E04, E05 now complete). Before/after in 8.13. The Reader is not deterministic: L04's speed range became one incomplete record in Session E |
 | 14 | Checker: energy density recomputed vs reported | 4.1, decisions 10-30 | 6.1, 6.2 | 389 J/mm³ case passes, corrupted record fails | ✅ energy density recomputed vs printed (2 %), range check: 32 unit slips caught in the first run, 1 after the Reader fixes |
 | 15 | Checker: required conditions present, primary vs quoted, same process | decisions 10-30 | 6.1, 6.2 | Pass/fail table per record | ✅ 14 incomplete, 21 quoted, 1 DED row on real records |
 | 16 | One retry with the reason, then "not verified" | 5.1 | 8.4, 8.7, 8.11 | Run log | ✅ first run: 33 records sent back, 31 fixed, 2 not verified. After the fixes: 6 sent back (4 became quoted, 2 not verified). A Reader timeout costs one unit, not the run |
 | 17 | Comparability rule and conflict flag | 2.1, 4.1 | 6.5, 8.12 | Flagged pairs | ✅ active rule (Chinmay, 11-07 evening): methods may differ (tagged), every layer, at most 3 to the Analyst. 30 µm: old rule 84 pairs, strict 2, active 4. All layers: 12 conflicts, 3 across papers, 30 method-spread pairs. Tolerance sensitivity table (9 settings) |
 | 18 | Outlier only if consensus AND the whole physics band disagree | 1.1, 2.1 | 6.6 | Outlier table with both signals | ✅ consensus AND the whole melt-pool band, shown on 36 real records (0 outliers with the strict rule), synthetic test |
-| 19 | Analyst: Tree of Thought (generator, critic, rubric, beam 2, depth 2, evidence-gated) | 4.1 | 7, 8.11, 8.12 | Tree printout for the 97.76 % vs 99.97 % case | ✅ generator, critic, rubric, beam 2, depth 2, evidence gate, both papers' method and condition sentences for every branch. Known controls: method, Resolved +8. Real: L04 vs L07 Competing (reporting +6, method +5), E06 vs L06 S9 method Resolved +8, E06 vs L06 S9 Archimedes regime Competing +5 |
-| 20 | Outcome bands and evidence tiers | decisions 11-06 | 7.1, 8.12 | Resolved / Competing / Unresolved per conflict | ✅ bands and tiers. Rubric of 11-07 evening: quote per side (+3 each), code facts only when they test the cause. Before/after table in 8.12 |
+| 19 | Analyst: Tree of Thought (generator, critic, rubric, beam 2, depth 2, evidence-gated) | 4.1 | 7, 8.11, 8.12 | Tree printout for the 97.76 % vs 99.97 % case | ✅ generator, critic, rubric, beam 2, depth 2, evidence gate and support gate (Session E), both papers' method and condition sentences for every branch. L08 sample 4 method Resolved +8, L06 S1 method Competing +5, E06 vs L06 S9 method Competing +3 and regime Competing +5, L04 vs L07 (Session D record) method Resolved +8 |
+| 20 | Outcome bands and evidence tiers | decisions 11-06 | 7.1, 8.12 | Resolved / Competing / Unresolved per conflict | ✅ bands and tiers. Rubric: quote per side (+3 each) with the critic's supporting words checked by code, code facts only when they test the cause. Three-rubric table in 8.12 |
 | 21 | Coordinator in code, parallel Readers, conditional Analyst, limits | 5.1 | 8.6 to 8.15 | Graph drawing, run log, timeline | ✅ real Reader, Checker and Tree of Thought Analyst in the graph on 16 papers, conflicts at every layer, windows per method, widening, MCP tools |
 
 ## Memory and guardrails
@@ -58,11 +58,11 @@ Last updated 2026-11-07 (after Session D). Notebook column uses the Parts of `do
 |---|---|---|---|---|---|
 | 27 | Hand-checked answer key | 1.1 | 3.11, `eval/` | CSV, checked by Chinmay | 🟡 sheets, template and scope ready (L08 only Table 5). Chinmay fills it |
 | 28 | Extraction accuracy per field | 1.1, 5.1 | 10.1 | Accuracy table | 🟡 scoring code ready and tested on a synthetic key, waits for the answer key |
-| 29 | Planted (corrupted) records caught | 1.1, 5.1 | 6.3, 6.4 | Caught / missed table | ✅ 5 of 5 caught after the column check (4 of 5 before) |
-| 30 | Prompt-only baseline vs agent | 2.1 | 3.8, 4, 10.2 | Same questions, both scored | 🟡 prompt-only answer checked in code (3.8), single agent built (Part 4). Scoring waits for the key |
-| 31 | Tree of Thought vs single thinking call | 4.1 | 7.2, 8.12, 10.2 | 2 to 3 conflicts compared | ✅ 5 cases: tree and single call agree on 4 (both controls, both E06 pairs). L04 vs L07: tree Competing (reporting, method), single call method. Session C results kept for comparison |
-| 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | 4, 6.7, 10.2 | Comparison table | 🟡 calls, tokens, time and Checker results compared. Accuracy waits for the key |
+| 29 | Planted (corrupted) records caught | 1.1, 5.1 | 6.3, 6.4, 10.3 | Caught / missed table | ✅ 5 of 5 caught after the column check (4 of 5 before) |
+| 30 | Prompt-only baseline vs agent | 2.1 | 3.8, 4, 10.1 | Same questions, both scored | 🟡 prompt-only answer checked in code (3.8), single agent built (Part 4, Session C schema: two reruns with the µm label timed out). Scoring waits for the key |
+| 31 | Tree of Thought vs single thinking call | 4.1 | 7.2, 8.12, 10.2 | 2 to 3 conflicts compared | ✅ 5 cases: tree and single call agree on the cause in all five. Three-rubric comparison in 8.12 |
+| 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | 4, 10.1, 10.4 | Comparison table | 🟡 calls, tokens, time, records and Checker results compared (graph: 137k input tokens against 434k, about twice the output tokens). Accuracy waits for the key |
 | 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 0.2, 0.3, 2.2 | Trace viewer cell | ✅ `ChatGLM` + `set_llm_cache` (SQLite backend) + `TraceRecorder` callback, JSONL per run, `show_trace`. Graph nodes are named automatically once real agents use `glm` |
-| 34 | Every value in the recommendation links to paper and passage | 1.1 | 8.11 | Recommendation with citations | 🟡 one window per density method side by side (Archimedes 165 to 220 W from 2 records, image analysis 150 to 250 W from 8), each citing record ids with chunk ids. Not yet shown as paper and passage text |
+| 34 | Every value in the recommendation links to paper and passage | 1.1 | 8.11, 11 | Recommendation with citations | ✅ Part 11 demo: one request from clarification to cited windows per method within the remembered 200 W limit, conflicts explained, approval and resume, trace summary. Windows cite record ids with their chunk ids |
 
-Count on 2026-11-07 (after Session D): 28 ✅, 5 🟡, 1 ⬜.
+Count on 2026-11-07 (after Session E): 29 ✅, 5 🟡, 0 ⬜.

@@ -341,6 +341,46 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   evidence and limitations where it is used. Part 0 has a "how the pieces fit" narrative and a rules and thresholds
   table, and each Part ends with "what this step showed". Added to `docs/notebook-outline.md`.
 
+- **2026-11-07** · Public-repo cleanup (Session E): outputs print paths relative to the project root, the notebook
+  progress-bar warning and the pip version notice (both printed the local install path) are suppressed, and examples
+  use "a 200 W machine" instead of a machine brand (a request may name a machine by its power, `GENERIC_MACHINE`). A
+  scan of every committed file found no local path, e-mail address or employer name in the current tree. The submitted
+  checkpoint documents carry my name as author, which is intended. Older commits still contain the local path in three
+  notebook outputs: the history needs a squash or filter before the repository goes public.
+- **2026-11-07** · Symbol-plus-unit headers (Session E): a parameter table is one with a power column named by the word or
+  by "P (W)" / "LP [W]" and a speed column, and the column check reads "P (W)", "v (mm/s)", "h (µm)", "t (µm)",
+  "VED (J/mm³)" by symbol and unit, with the unit alone as a fallback only where it is unambiguous ("(µm)" names nothing).
+  · E04's and E05's parameter tables were missed because their columns are named only by symbol, so the Reader never
+  saw them. After: E04 and E05 records verified (4 of 4, were incomplete), E02 still incomplete: the Reader writes "core 200 W, 800 mm/s" into its notes but leaves the fields
+  empty, and the paper's parameter sentence gives no hatch, so the record would stay incomplete anyway, column check on v2 still 0 false alarms (133 pass, 1 n/a). Side effect: L04's tensile-specimen
+  table is now in L04's context, and the Reader merged "190 W, 700 to 800 mm/s" into one record without a speed.
+- **2026-11-07** · Support gate for the critic (Session E): a verified quote is not support by itself. The critic copies the
+  few words of its quote that show the cause, code checks they are in the quote and contain a real word, and a caption or
+  a row of numbers never counts. The same gates apply to the single call. Chunk ids written before or after a quote are
+  ignored. · In Session D a table caption earned +3 for "reporting" in L04 vs L07. Results (Session D, now): L06 S1
+  method Resolved +8, Competing +5 (the critic found a supporting sentence for the Archimedes side only). L08 sample 4 method Resolved +8, unchanged.
+  E06 vs L06 S9 image analysis method Resolved +8, Competing +3. E06 vs L06 S9 Archimedes regime Competing +5, unchanged.
+  L04 vs L07 on L04's Session D record reporting Competing +6, method Resolved +8, as the single call. Tree and single
+  call agree on all five cases.
+- **2026-11-07** · Robustness (Session E): Reader calls stop after 10 minutes and are retried once (a runaway answer ends on
+  another try, as L04 did), a unit that fails or is missing from the cache offline costs that unit only, and a tree call
+  that fails (an answer cut at the token limit) counts as no answer for that branch. · The first Session E run lost L04 to
+  a 20-minute runaway and a tree call hit the 16,000-token limit with a degenerate answer.
+- **2026-11-07** · Single agent stays on the Session C schema (Session E, item 4): tried once more with the `µm` label and the
+  same 20-minute timeout. Calls 1 to 10 replayed, call 11 answered in 46 s, call 12 ran past the timeout. Part 4 and Part
+  10.1 state that the baseline uses the older label and why.
+- **2026-11-07** · Part 10 as one section per question (Session E): multi-agent vs single agent, tree vs single call, planted
+  errors, Checker results, accuracy per (paper, field) on v2 only, the chunking experiment and fine-tuning. Chunking
+  experiment (capability 5): recall@5 of the chunks holding the true density value, one search per value inside its
+  paper, plain similarity (no MMR) so only the chunking differs. On the provisional key (96 Checker-verified v2 values):
+  v1 windows tables whole 0.75, v1 tables split 0.77, v2 splitter tables whole 0.76, v2 tables split 0.71. The cell
+  switches to `eval/answer_key.csv` when it has rows. · The differences are small, so the Checkpoint 3.1 choice (tables
+  whole) stands until the real key says otherwise.
+- **2026-11-07** · Part 11 end-to-end demo (Session E): "Stainless steel on a 200 W machine, 30 µm layers, relative density
+  above 99.5 %" through the full graph with clarification, memory and widening: it asks for the grade, applies the 200 W
+  limit remembered in 9.3 (52 records above it left out), explains two conflicts and pauses for approval, then resumes.
+  48 model calls (all replayed), one line of reasoning per call so it fits on screen, trace summary at the end.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
