@@ -240,6 +240,58 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   48,000-token requests left the next calls running at about 10 tokens per second for 20 minutes. So the Reader uses
   smaller units and a generous timeout (1,200 s) instead of retrying long calls.
 
+- **2026-11-07** · Notebook renumbered to `docs/notebook-outline.md` (Parts 0 to 11). Each Part opens with its question,
+  course concept, framework feature and evidence. Cache and trace moved to Part 0, the record schema to Part 4 (shared
+  by the baseline and the Reader), the Reader is Part 5, the Checker Part 6, the Tree of Thought Part 7, the graph with
+  the T1 to T5 wiring tests Part 8, guardrails Part 9, evaluation Part 10. · Agreed with Chinmay so every course concept
+  has one visible place. No prompt or schema changed, so all cached answers still replay.
+- **2026-11-07** · Single-agent baseline (Part 4): `create_agent` with `@tool` versions of `search_library`,
+  `stated_conditions`, `energy_density` and `convert_units`, a `ToolStrategy` final answer (the records of 4.1 plus a
+  window), 32,000 tokens, 1,200 s timeout, no retries, `recursion_limit` 60. · First half of capabilities 30 and 32.
+  Result: 15 model calls, 355 s of model time, 434k input and 87k output tokens (the prompt grows with every tool
+  result), 24 records at 30 µm from 5 papers, its own window 190 to 220 W, 700 to 800 mm/s, 90 to 120 µm. It skipped
+  L06's image-analysis values and named density methods the Reader left blank. Accuracy follows with the answer key.
+- **2026-11-07** · Comparability rule (Chinmay's decision): the strict rule is active. Same layer thickness, same
+  condition (as-built or HIP, unknown allowed but marked), power and speed each within 10 %, hatch within 15 %, the same
+  density method when both are known (unknown allowed but marked). One sample measured by two methods is a "method
+  spread", not a conflict. Only pairs across papers go to the Analyst. The energy-density rule is kept only for the
+  "before" count. · On the final records the old rule flagged 70 pairs (22 inside one paper), many pairing settings that
+  only share an energy density. The strict rule flags 1 conflict across papers (L04 vs L07 at 190 W, 800 mm/s) and lists
+  9 method-spread pairs (all L06, Archimedes against image analysis, gaps of 1.5 to 6.8 points).
+- **2026-11-07** · Process window from one density method (Chinmay's decision): the bounds come from verified records
+  measured by Archimedes where available (otherwise the most common known method). Records that reach the target by
+  another or an unknown method are shown next to the window as supporting evidence and do not set its bounds. · Image
+  analysis of a section reads denser than Archimedes on the same sample (L06: up to 6.8 points), so mixing methods
+  widens the window with optimistic values. Recomputed 30 µm window: bounds from a single Archimedes record (L07 high-VED: 220 W, 725 mm/s, 120 µm hatch), with 6 records that reach 99.5 % by image analysis (L06 S6 to S9) or by an unstated method (L04 at 190 W, 700 and 800 mm/s) shown as support.
+- **2026-11-07** · Answer-key scope (Chinmay's decision): L01 to L10 in full except L08, which is keyed only from Table
+  5 (`eval/README.md`). The scoring code scores L08 only on records taken from Table 5. · Table 5 is the smallest L08
+  table (18 rows, against 32 in Table 2 and 64 in Table 4) that still has what L08 is in the library for: as-built and
+  HIP results of the same samples. Its HIP rows carry only the condition as a label, a realistic layout trap.
+- **2026-11-07** · Main Tree of Thought test case: L04 vs L07 at 190 W and 800 mm/s (hatch 90 vs 100 µm, 99.96 % vs
+  94.6 %). It replaces 97.76 % vs 99.97 % from Checkpoint 4.1, which are at 140 W, 100 mm/s and 190 W, 800 mm/s and are
+  not comparable under the strict rule. Two method-spread pairs whose cause the papers state (L06 S1, L08 sample 4) serve
+  as known-answer controls. · Under the strict rule L04 vs L07 is the only cross-paper conflict at 30 µm.
+- **2026-11-07** · Column-position check added to check 11 (a number must sit under a header, or carry a unit, of its
+  own field) and used by the graph's Checker (`check_record_full`). · It catches the speed and hatch swap that 6.3
+  missed (planted errors 5 of 5 now). Two refinements removed its false alarms on the 190 real records (from 20 to 0):
+  a table only counts for a field if it has a column for that field, and a number that is also in a cited table is
+  judged there rather than in running text.
+- **2026-11-07** · Tree of Thought built as in Checkpoint 4.1 (Part 7): generator, critic per branch with the rubric
+  (the model judges, code sums), evidence gate (quotes must be found word for word), beam 2, depth 2, at most 9 calls,
+  bands Resolved / Competing / Unresolved with evidence tiers. Results: both known cases pick "method" with the paper's
+  own explanation quoted (Competing, +5, lead 3), and the single call agrees. L04 vs L07: the tree says "regime"
+  (Resolved, +7, the hatch 90 vs 100 µm changes the energy density by 11 %), the single call says "method" (low
+  confidence, no verified quote). L04's Methods state its porosity came from image analysis and its relative density
+  from Archimedes, so the two values were probably measured differently. The tree's method branch never retrieved that
+  sentence. · Lessons: per-branch retrieval is the weak point (the 4.1 risk "weak evaluation prunes the best branch"),
+  and a method explanation can reach only +5 (text +3, check +2, since consensus and physics say nothing about methods),
+  so it can never be Resolved with the 6-point threshold. Both need Chinmay's view before tuning. Once the Reader
+  records L04's method, L04 vs L07 is no longer comparable (different known methods) and no cross-paper conflict is left.
+- **2026-11-07** · Engineering lessons. A LangGraph graph invoked directly inside another graph's node waited forever (it
+  inherits the outer run's context): the Analyst now runs the tree in a worker thread, which starts with a fresh
+  context. `SqliteStore` needs an autocommit connection (`isolation_level=None`). Every SQLite file is opened with a test
+  write and retried (the Windows read-only lesson of 0.3).
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
@@ -250,6 +302,8 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-10-22 | All agent roles (Extractor, Checker, Analyst) | GLM-5.2 hosted vs local Qwen3-8B Q4 | GLM-5.2 reachable, key valid, thinking on/off both work | GLM-5.2, thinking on; replaces the local plan above |
 | 2026-11-07 | LangChain wrapper and structured output for all LLM roles (Reader, Analyst, ReAct baseline) | `ChatOpenAI` as is, `ChatGLM` subclass, raw `openai` client. Structured output: `json_schema`, `function_calling`, `json_mode` | `ChatOpenAI` loses the reasoning text. With `ChatGLM` all three methods correct on 2 test passages: json_schema 4 to 6 s, about 1,000 tokens, full reasoning. function_calling 2 s, 300 tokens, little reasoning. json_mode 3 to 10 s, needs the schema in the prompt. `bind_tools` and `create_agent` correct, 1 to 2 s per tool step | `ChatGLM` + `json_schema` (fallback `function_calling`) |
 | 2026-11-07 | Reader (structured extraction) | one call per paper vs one call per density table (reading units), both GLM-5.2 json_schema with thinking on | per paper: L08 timed out twice (600 s). Per table: 24 of 24 calls parsed, median 12.5 s, 190 records, 32 unit tags wrong (µm as mm), fixed on the retry | reading units, json_schema |
+| 2026-11-07 | Single-agent baseline (Part 4) | `create_agent` + 4 tools + `ToolStrategy` | 15 calls, 355 s, 434k in / 87k out tokens, 24 records at 30 µm | kept as the baseline for capabilities 30 and 32 |
+| 2026-11-07 | Analyst (Part 7) | Tree of Thought (generator + critic, GLM-5.2 json_schema, 16,000 tokens) vs one thinking call | known cases: both pick the right cause. L04 vs L07: tree regime (Resolved), single call method (low) | tree kept, retrieval per branch and thresholds to tune |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.
