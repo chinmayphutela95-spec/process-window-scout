@@ -206,6 +206,40 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   density-method sentences, Methods text). Empty template `eval/answer_key.csv` with fixed columns, instructions in
   `eval/README.md`. · Extraction accuracy only means something against a key the agent never touched.
 
+- **2026-11-07** · Reader (notebook Part 3b, outline Part 5): GLM-5.2 with `json_schema` structured output into a
+  Pydantic `Record` that holds every number **as printed with its unit**, `quantity` (relative density, porosity or
+  none), the paper's sample label and the chunk ids it read from. Code converts units with Part 1's `convert_units` and
+  turns porosity into density (the model never does arithmetic). The prompt (`ChatPromptTemplate`) carries the grounding
+  rules, the density definition (measured relative density of parts, method, as-built or HIP) and source precedence
+  (tables and text over abstract, measured over nominal, quoted marked, a printed mean over its replicates). The Reader
+  reads a paper in **reading units, one per density table**, with the paper's parameter tables, stated conditions and 4
+  best passages as context (budget 30,000 characters). · One call per whole paper timed out twice on L08 (about 80
+  records, and the reasoning listed every record before the answer). Per table, all 24 calls parsed: median 12.5 s,
+  103,084 output tokens (49 % reasoning) for 190 records. The traps behaved: L01 no density, L02 m/s converted, L04
+  read from the text, L08 as-built and HIP, L10 tiny porosities copied as printed, L05 review quoted. Its typical mistake:
+  values printed in µm tagged as mm (32 records), caught by the Checker and corrected on the retry.
+- **2026-11-07** · Checker (Part 3b, outline Part 6), code only: (11) every printed number in the cited chunks, and in a
+  row-per-sample table the density in that sample's own row. (14) P/(v·h·t) against a printed energy density (2 %),
+  plus Part 1's typical ranges. (15) power, speed, hatch and layer present, primary or quoted, PBF-LB. Failures of 11 and
+  14 go back to the Reader once with the reason, then "not verified". Incomplete, quoted, no density and other process
+  are final statuses (re-reading would not change them), and only verified records feed conflicts and the window. ·
+  The range check was added because P/(v·h·t) cannot see a speed and hatch swap (v·h is symmetric) and needs a printed
+  energy density to see a unit slip. Origin and process are judged on the chunk that holds the density itself, after a
+  parameter table that cites a dataset made L04's own measurements look quoted. Planted errors: 4 of 5 caught. Missed: a
+  speed and hatch swap with both values in range (L02, 200 mm/s and 70 µm). Next: a column-position check.
+- **2026-11-07** · Real Reader and Checker in the LangGraph graph (5.11) without rewiring: `reader_node` takes several
+  records per paper, `route_after_check` sends a paper's rejected records back together (one call per paper), the
+  Checker node takes `judge=check_record`, and a `PendingAnalyst` stands in without any model call. · Real run to the
+  approval pause: 190 records, 33 sent back from 4 papers, 31 verified on the retry, 2 quoted literature rows "not
+  verified", 4 fresh calls of 7 to 27 s. The provisional conflict rule flags 70 pairs among 39 verified 30 µm records:
+  22 inside one paper (9 are one sample measured by Archimedes and by image analysis) and many pairing very different
+  P, v and h that only share an energy density. L04 vs L07 is not flagged (10.5 % apart in energy density). The rule
+  needs Chinmay's decision (same density method, closeness in P, v and h, not only E_v).
+- **2026-11-07** · Engineering lessons. The trace file is also kept open for a run (appending by reopening failed now
+  and then, the same Windows lock problem as the cache). The endpoint stays slow after a client gives up: two abandoned
+  48,000-token requests left the next calls running at about 10 tokens per second for 20 minutes. So the Reader uses
+  smaller units and a generous timeout (1,200 s) instead of retrying long calls.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
@@ -215,6 +249,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-10-23 | Embeddings | Qwen3-Embedding-0.6B (local GPU, about 1.2 GB fp16) vs all-MiniLM-L6-v2 (course lab) | chosen before testing: no 256-token limit, runs locally; recall@5 comparison planned | Qwen3-Embedding-0.6B |
 | 2026-10-22 | All agent roles (Extractor, Checker, Analyst) | GLM-5.2 hosted vs local Qwen3-8B Q4 | GLM-5.2 reachable, key valid, thinking on/off both work | GLM-5.2, thinking on; replaces the local plan above |
 | 2026-11-07 | LangChain wrapper and structured output for all LLM roles (Reader, Analyst, ReAct baseline) | `ChatOpenAI` as is, `ChatGLM` subclass, raw `openai` client. Structured output: `json_schema`, `function_calling`, `json_mode` | `ChatOpenAI` loses the reasoning text. With `ChatGLM` all three methods correct on 2 test passages: json_schema 4 to 6 s, about 1,000 tokens, full reasoning. function_calling 2 s, 300 tokens, little reasoning. json_mode 3 to 10 s, needs the schema in the prompt. `bind_tools` and `create_agent` correct, 1 to 2 s per tool step | `ChatGLM` + `json_schema` (fallback `function_calling`) |
+| 2026-11-07 | Reader (structured extraction) | one call per paper vs one call per density table (reading units), both GLM-5.2 json_schema with thinking on | per paper: L08 timed out twice (600 s). Per table: 24 of 24 calls parsed, median 12.5 s, 190 records, 32 unit tags wrong (µm as mm), fixed on the retry | reading units, json_schema |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.

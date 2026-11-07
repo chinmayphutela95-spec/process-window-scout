@@ -25,22 +25,22 @@ Last updated 2026-11-07.
 |---|---|---|---|---|---|
 | 9 | `convert_units`, `energy_density`, `melt_pool_band` | 2.1 | 1 | 26 checks, depth band plot | ✅ |
 | 10 | `consensus_lookup` (records at similar settings) | 2.1 | | Query result for a test record | ⬜ |
-| 11 | Source check (value verbatim in its passage) | 2.1, 5.1 | 5.4 | Pass and fail cases | 🟡 made-up passages only |
+| 11 | Source check (value verbatim in its passage) | 2.1, 5.1 | 5.4, 3b.5 to 3b.7 | Pass and fail cases | ✅ 190 real records, plus the same-row check. Planted: value not in passage and value from another sample caught |
 | 12 | Tools served over MCP (fastmcp), each agent only its own | 2.x, 5.1 diagram | | Agent calling a tool through the MCP server | ⬜ |
 
 ## Agents and coordination
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | 2.4 spike | Records for the real papers with passage IDs | ⬜ needs VPN. Prerequisite tested 11-07: `with_structured_output` (json_schema) correct with thinking on |
-| 14 | Checker: energy density recomputed vs reported | 4.1, decisions 10-30 | | 389 J/mm³ case passes, corrupted record fails | ⬜ |
-| 15 | Checker: required conditions present, primary vs quoted, same process | decisions 10-30 | | Pass/fail table per record | ⬜ |
-| 16 | One retry with the reason, then "not verified" | 5.1 | 5.4, 5.7 | Run log | 🟡 made-up data |
-| 17 | Comparability rule and conflict flag | 2.1, 4.1 | 5.5 | Flagged pairs | 🟡 rule (energy density within 10 %) needs Chinmay's decision |
+| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | 3b.1 to 3b.4 | Records for the real papers with passage IDs | ✅ 190 records from L01 to L10 with chunk ids (24 calls, reasoning traced), traps table, `data/extraction/reader_records.csv`. Accuracy: see 28 |
+| 14 | Checker: energy density recomputed vs reported | 4.1, decisions 10-30 | 3b.5, 3b.6 | 389 J/mm³ case passes, corrupted record fails | ✅ 52 pass, 1 fail on real records. Range check added: 32 unit slips caught |
+| 15 | Checker: required conditions present, primary vs quoted, same process | decisions 10-30 | 3b.5, 3b.6 | Pass/fail table per record | ✅ 14 incomplete, 21 quoted, 1 DED row on real records |
+| 16 | One retry with the reason, then "not verified" | 5.1 | 5.4, 5.7, 5.11 | Run log | ✅ real run: 33 records sent back from 4 papers, 31 fixed, 2 not verified |
+| 17 | Comparability rule and conflict flag | 2.1, 4.1 | 5.5, 5.11 | Flagged pairs | 🟡 provisional rule flags 70 pairs on real records (22 inside one paper). Needs Chinmay's decision |
 | 18 | Outlier only if consensus AND the whole physics band disagree | 1.1, 2.1 | | Outlier table with both signals | ⬜ |
 | 19 | Analyst: Tree of Thought (generator, critic, rubric, beam 2, depth 2, evidence-gated) | 4.1 | 5.5 stub | Tree printout for the 97.76 % vs 99.97 % case | ⬜ needs VPN |
 | 20 | Outcome bands and evidence tiers | decisions 11-06 | | Resolved / Competing / Unresolved per conflict | ⬜ |
-| 21 | Coordinator in code, parallel Readers, conditional Analyst, limits | 5.1 | 5.6 to 5.10 | Graph drawing, run log, timeline | ✅ wiring (made-up data) |
+| 21 | Coordinator in code, parallel Readers, conditional Analyst, limits | 5.1 | 5.6 to 5.11 | Graph drawing, run log, timeline | ✅ with the real Reader and Checker (5.11). Analyst still a stand-in |
 
 ## Memory and guardrails
 
@@ -58,11 +58,11 @@ Last updated 2026-11-07.
 |---|---|---|---|---|---|
 | 27 | Hand-checked answer key | 1.1 | 3a.11, `eval/` | CSV, checked by Chinmay | 🟡 review sheets (HTML) and empty template ready 11-07. Chinmay fills it offline |
 | 28 | Extraction accuracy per field | 1.1, 5.1 | | Accuracy table | ⬜ needs 13 + 27 |
-| 29 | Planted (corrupted) records caught | 1.1, 5.1 | | Caught / missed table | ⬜ |
+| 29 | Planted (corrupted) records caught | 1.1, 5.1 | 3b.7 | Caught / missed table | ✅ 4 of 5 caught. Missed: speed and hatch swapped with both in range |
 | 30 | Prompt-only baseline vs agent | 2.1 | 3a.8 partly | Same questions, both scored | 🟡 |
 | 31 | Tree of Thought vs single thinking call | 4.1 | | 2 to 3 conflicts compared | ⬜ |
 | 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | | Comparison table | ⬜ |
 | 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 2.2, 2.3, 2.4 | Trace viewer cell | ✅ `ChatGLM` + `set_llm_cache` (SQLite backend) + `TraceRecorder` callback, JSONL per run, `show_trace`. Graph nodes are named automatically once real agents use `glm` |
-| 34 | Every value in the recommendation links to paper and passage | 1.1 | | Recommendation with citations | ⬜ |
+| 34 | Every value in the recommendation links to paper and passage | 1.1 | 5.11 | Recommendation with citations | 🟡 window cites record ids, each with its chunk ids. Not yet shown to the engineer as paper and passage |
 
-Count on 2026-11-07 (after Session A): 10 ✅ (two of them wiring only), 6 🟡, 18 ⬜.
+Count on 2026-11-07 (after Session B): 16 ✅, 5 🟡, 13 ⬜.
