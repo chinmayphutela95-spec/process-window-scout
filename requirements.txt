@@ -1,7 +1,19 @@
-# Runtime dependencies for Process Window Scout.
+# Runtime dependencies for Process Window Scout (everything the notebook imports).
 # Added as each part of the agent is built; pin versions once the MVP works.
 jupyter
 ipykernel
 numpy
 scipy
 matplotlib
+requests
+python-dotenv
+openai
+torch
+sentence-transformers
+chromadb
+langchain
+langchain-core
+langchain-openai
+langchain-chroma
+langchain-text-splitters
+langgraph

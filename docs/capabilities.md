@@ -10,14 +10,14 @@ Last updated 2026-11-07.
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 1 | Find open-access PBF-LB papers automatically (OpenAlex, Europe PMC full text) | 1.1, 3.1 | 3a | Paper table with licences | ✅ 5 x 316L + 1 distractor. 1.1 said 15 to 20 papers, scope guard says 5 to 10 |
-| 2 | Parse full text including tables | 3.1 | 3a | Parsed table next to the original | ✅ |
+| 1 | Find open-access PBF-LB papers automatically (OpenAlex, Europe PMC full text) | 1.1, 3.1 | 3a, 3a.9 | Paper table with licences | ✅ v1: 5 x 316L + 1 distractor (3.1). Frozen library v2 (11-07): 10 x 316L (20 to 50 µm, 1 review) + 1 distractor, all CC BY, from about 400 search hits. 1.1 said 15 to 20 papers, scope guard says 5 to 10 |
+| 2 | Parse full text including tables | 3.1 | 3a, 3a.11 | Parsed table next to the original | ✅ tables also rendered to HTML with merged cells for the answer-key sheets |
 | 3 | Alloy label + metadata filter (similarity trap) | 3.1 | 3a.6 | Distractor ranks 7th without the filter | ✅ |
 | 4 | Chunking (250 words, 50 overlap, tables whole) | 3.1 | 3a.3 | Chunk counts | ✅ |
-| 5 | Chunking experiment (chunk size, tables whole vs split) | new | | Retrieval recall@5 against the answer key | ⬜ needs answer key |
-| 6 | Qwen3 embeddings, ChromaDB, MMR, max 2 per paper | 3.1 | 3a.4, 3a.5 | MMR changed 8 of 8 result lists | ✅ |
-| 7 | Stated-conditions lookup (layer thickness) | 3.1 | 3a.7 | Conditions printed per paper | ✅ |
-| 8 | With vs without retrieval, invented citations caught | 2.1, 3.1 | 3a.8 | Two answers side by side; citation check | 🟡 citation check was done by hand, make it a code cell |
+| 5 | Chunking experiment (chunk size, tables whole vs split) | new | 3a.3, 3a.10 | Retrieval recall@5 against the answer key | ⬜ both chunkers now exist (v1 fixed windows, v2 LangChain recursive splitter), comparison needs the answer key |
+| 6 | Qwen3 embeddings, ChromaDB, MMR, max 2 per paper | 3.1 | 3a.4, 3a.5, 3a.10 | MMR changed 8 of 8 result lists | ✅ v1 hand-written. v2 with LangChain `Chroma` + MMR retriever + alloy filter, cap applied after MMR |
+| 7 | Stated-conditions lookup (layer thickness) | 3.1 | 3a.7, 3a.9 | Conditions printed per paper | ✅ works on both libraries |
+| 8 | With vs without retrieval, invented citations caught | 2.1, 3.1 | 3a.8 | Two answers side by side; citation check | 🟡 submitted run now replayed from its trace (same passages checked). Citation check was done by hand, make it a code cell |
 
 ## Tools
 
@@ -32,7 +32,7 @@ Last updated 2026-11-07.
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | | Records for the real papers with passage IDs | ⬜ needs VPN |
+| 13 | Reader: structured extraction with citation, reasoning printed | 1.1, 5.1 | 2.4 spike | Records for the real papers with passage IDs | ⬜ needs VPN. Prerequisite tested 11-07: `with_structured_output` (json_schema) correct with thinking on |
 | 14 | Checker: energy density recomputed vs reported | 4.1, decisions 10-30 | | 389 J/mm³ case passes, corrupted record fails | ⬜ |
 | 15 | Checker: required conditions present, primary vs quoted, same process | decisions 10-30 | | Pass/fail table per record | ⬜ |
 | 16 | One retry with the reason, then "not verified" | 5.1 | 5.4, 5.7 | Run log | 🟡 made-up data |
@@ -56,13 +56,13 @@ Last updated 2026-11-07.
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 27 | Hand-checked answer key | 1.1 | | CSV, checked by Chinmay | ⬜ Chinmay, offline |
+| 27 | Hand-checked answer key | 1.1 | 3a.11, `eval/` | CSV, checked by Chinmay | 🟡 review sheets (HTML) and empty template ready 11-07. Chinmay fills it offline |
 | 28 | Extraction accuracy per field | 1.1, 5.1 | | Accuracy table | ⬜ needs 13 + 27 |
 | 29 | Planted (corrupted) records caught | 1.1, 5.1 | | Caught / missed table | ⬜ |
 | 30 | Prompt-only baseline vs agent | 2.1 | 3a.8 partly | Same questions, both scored | 🟡 |
 | 31 | Tree of Thought vs single thinking call | 4.1 | | 2 to 3 conflicts compared | ⬜ |
 | 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | | Comparison table | ⬜ |
-| 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 2 (`ask_llm`) | Trace viewer cell | 🟡 per-run trace for the graph still to do |
+| 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 2.2, 2.3, 2.4 | Trace viewer cell | ✅ `ChatGLM` + `set_llm_cache` (SQLite backend) + `TraceRecorder` callback, JSONL per run, `show_trace`. Graph nodes are named automatically once real agents use `glm` |
 | 34 | Every value in the recommendation links to paper and passage | 1.1 | | Recommendation with citations | ⬜ |
 
-Count on 2026-11-07: 9 ✅ (two of them wiring only), 6 🟡, 19 ⬜.
+Count on 2026-11-07 (after Session A): 10 ✅ (two of them wiring only), 6 🟡, 18 ⬜.

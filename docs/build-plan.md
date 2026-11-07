@@ -26,8 +26,8 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 | # | Part | Milestone | Checkpoint | Status / done when |
 |---|---|---|---|---|
 | M1 | 1 | Deterministic tools: `convert_units`, `energy_density`, `melt_pool_band` | 2.1 | ✅ 2026-10-18 |
-| M2a | 2 | GLM-5.2 client (`ask_llm`, thinking on, reasoning printed) | 3.1 | ✅ 2026-10-24 |
-| M3a | 3a | Retrieval: Europe PMC library (5 x 316L + 1 distractor), chunks, Qwen3 embeddings in ChromaDB, `search_passages` (MMR, alloy filter, max 2 per paper), `stated_conditions`, with/without demo | 3.1 | ✅ 2026-10-24 |
+| M2a | 2 | GLM-5.2 client (`ask_llm`, thinking on, reasoning printed). Then (2.2 to 2.4) `ChatGLM` for LangChain, cache (`set_llm_cache`) and trace (callback handler) for every model call, spike on structured output and tool calls | 3.1 | ✅ 2026-10-24, LangChain layer ✅ 2026-11-07 |
+| M3a | 3a | Retrieval: Europe PMC library (5 x 316L + 1 distractor), chunks, Qwen3 embeddings in ChromaDB, `search_passages` (MMR, alloy filter, max 2 per paper), `stated_conditions`, with/without demo. Then (3a.9 to 3a.11) the frozen library v2 (10 x 316L + distractor) with LangChain splitter, Chroma and MMR retriever, and answer-key review sheets | 3.1 | ✅ 2026-10-24, library v2 ✅ 2026-11-07 |
 | M2b | 2 | ReAct agent in **LangGraph** (`langchain-openai` to install; check that GLM's reasoning survives the wrapper) with tools: `search_passages`, `stated_conditions`, Part 1 tools; reasoning printed at every step; trace saved | 4.1 | Agent answers the 30 µm question by calling tools itself |
 | M3b | 3b | **Evidence table + automated checks** (graders' main ask): extract records (alloy, process, power, speed, hatch, layer, density, method, source passage) with structured output into SQLite; code checks: value verbatim in its passage, energy density recomputed vs reported, required conditions present, primary vs quoted data | 4.1 | Records for the library with a pass/fail per check; one deliberately corrupted record caught |
 | M4 | 4 | **Tree of Thought for conflicts** (LangGraph subgraph): conflict flagging on comparable records; generator, critic with the rubric (model judges, code sums), beam 2, depth 2, evidence-gated scoring; test case 97.76% vs 99.97% at 30 µm | 4.1 | ToT vs single thinking call compared on 2 to 3 real conflicts |
@@ -37,6 +37,9 @@ the notebook itself, Part by Part, rather than in a separate package. Rules that
 
 **Scope guard:** MVP library of 5 to 10 papers, ToT on 2 to 3 real conflicts. A small system that works and
 is measured honestly beats a large unfinished one.
+
+The target structure of the final notebook (Parts 0 to 11, each with question, course concept and framework
+feature) is in `docs/notebook-outline.md`. The renumbering happens in a later round.
 
 ## Conventions
 - Prefer established frameworks over hand-written code (LangGraph for the agent loop and multi-agent flow,

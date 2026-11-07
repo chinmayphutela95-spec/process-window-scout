@@ -165,6 +165,47 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   for now; SQLite later for pauses across restarts. `recursion_limit` 25 and `max_concurrency` 3 in every run
   config. · Module 5 squad lab patterns (reducer, Send, ScriptedModel, interrupt), Checkpoint 5.1 design.
 
+- **2026-11-07** · GLM-5.2 through LangChain: `ChatGLM`, a subclass of `ChatOpenAI` with three overrides (notebook 2.2).
+  · Spike with real calls (notebook 2.4). `ChatOpenAI` drops vLLM's `reasoning` field on purpose (its documentation
+  says fields outside OpenAI's API are not kept), so the reasoning text was lost while the token count survived. The
+  subclass copies it to `additional_kwargs["reasoning_content"]` (LangChain's key for DeepSeek and Ollama reasoning),
+  times each call, raises `ModelUnavailable` at once when offline, and builds the cache key from the model name and
+  settings. Structured output works with thinking on in all three methods (two made-up passages, every number
+  correct). Chosen: `json_schema` for the Reader and the Analyst (the server enforces the schema and the model still
+  reasons in full, 4 to 6 s and about 1,000 output tokens per extraction). Fallback: `function_calling` (2 s, 300
+  tokens, but only 60 to 70 words of reasoning). `json_mode` is not used (the schema has to be pasted into the prompt,
+  and one call took 10 s and 2,362 tokens). `bind_tools` and `create_agent` give clean tool calls and keep the
+  reasoning at every step. The quotes the model returns are not verbatim (3 of 12 abridged with "..." or stitched from
+  two sentences), so the Reader will cite a passage ID and code will check every number against that passage.
+- **2026-11-07** · One cache and one trace for every model call, both standard LangChain hooks: `set_llm_cache` with my
+  own SQLite backend on the `BaseCache` interface (`data/llm_cache.sqlite`), and a `TraceRecorder` callback handler that
+  writes one JSON line per call to `data/traces/<run>.jsonl` (agent or node, prompt, reasoning, answer or tool calls,
+  tokens, seconds of the real call, cached or not), with a `show_trace` viewer (notebook 2.3). · The ready-made
+  `SQLiteCache` lives in `langchain-community`, which is being retired and warns about it. Three problems found and
+  fixed while building: (1) LangChain's default key contains the server address, (2) LangChain sets `total_cost` to 0
+  on a replayed answer, which changed the next step's key, so a tool loop missed the cache on its first replay (the key
+  now uses only each message's type, text and tool calls, tested end to end: fresh two-step agent run, then an offline
+  replay hit both steps), (3) opening the SQLite file anew for every call failed about 1 write in 15 on this laptop
+  ("attempt to write a readonly database"), while one connection kept open never failed in 600 writes. Restart & Run
+  All now replays every model answer without the endpoint (30 to 40 s).
+- **2026-11-07** · Frozen library v2 (notebook 3a.9 and 3a.10): 10 x 316L plus the 25CrMo4 distractor, all CC BY, in the
+  ChromaDB collection `papers_v2`, built with LangChain components (`RecursiveCharacterTextSplitter` counting words,
+  250 and 50 overlap, `langchain_chroma.Chroma`, MMR retriever with the alloy filter, the 2-per-paper cap applied after
+  MMR). Part 3a keeps `papers_v1` and `selection.json` unchanged, and the submitted 3.1 run is replayed from its trace
+  with a check that today's retrieval returns the same passages and conditions. · Chosen for variety in the
+  evaluation: layers of 20, 30, 40 and 50 µm (one paper also 70), Archimedes and image analysis on the same samples,
+  pycnometry with as-built and HIP results, a review with quoted tables, a scan speed reported in m/s, and a paper with
+  no measured density. Two exceptions to the "density in a table" rule are kept on purpose and documented:
+  PMC12387571 (density only in text and figures, the 99.97 % side of the 4.1 test case) and PMC13073740 (simulation
+  paper with quoted parameters and no density, so the right answer is "not reported"). The new `density_tables` test
+  ignores energy, power and dislocation density and the alloy's own density in kg/m³, which the old
+  `has_parameter_table` counted. `QwenEmbeddings` wraps the already loaded Qwen3 model in LangChain's `Embeddings`
+  interface, because `HuggingFaceEmbeddings` would load a second 1.2 GB copy onto the 8 GB GPU.
+- **2026-11-07** · The answer key is filled in by hand, independently of the agent (notebook 3a.11). Review sheets: one
+  self-contained HTML file in `data/answer_key/` (tables rendered from the XML with merged cells, conditions and
+  density-method sentences, Methods text). Empty template `eval/answer_key.csv` with fixed columns, instructions in
+  `eval/README.md`. · Extraction accuracy only means something against a key the agent never touched.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
@@ -173,6 +214,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-10-09 | (plan) Embeddings | Qwen3-Embedding-0.6B, bge-m3 | not yet tested | pending |
 | 2026-10-23 | Embeddings | Qwen3-Embedding-0.6B (local GPU, about 1.2 GB fp16) vs all-MiniLM-L6-v2 (course lab) | chosen before testing: no 256-token limit, runs locally; recall@5 comparison planned | Qwen3-Embedding-0.6B |
 | 2026-10-22 | All agent roles (Extractor, Checker, Analyst) | GLM-5.2 hosted vs local Qwen3-8B Q4 | GLM-5.2 reachable, key valid, thinking on/off both work | GLM-5.2, thinking on; replaces the local plan above |
+| 2026-11-07 | LangChain wrapper and structured output for all LLM roles (Reader, Analyst, ReAct baseline) | `ChatOpenAI` as is, `ChatGLM` subclass, raw `openai` client. Structured output: `json_schema`, `function_calling`, `json_mode` | `ChatOpenAI` loses the reasoning text. With `ChatGLM` all three methods correct on 2 test passages: json_schema 4 to 6 s, about 1,000 tokens, full reasoning. function_calling 2 s, 300 tokens, little reasoning. json_mode 3 to 10 s, needs the schema in the prompt. `bind_tools` and `create_agent` correct, 1 to 2 s per tool step | `ChatGLM` + `json_schema` (fallback `function_calling`) |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.
