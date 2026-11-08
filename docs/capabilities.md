@@ -4,7 +4,7 @@ Every capability promised in the course checkpoints, where it lives in the noteb
 shows it works. The final report and video should point to the "Evidence" column. Status: ✅ built and tested
 on real data, 🟡 built but only on made-up data or partly, ⬜ not built yet.
 
-Last updated 2026-11-08. Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 11).
+Last updated 2026-11-08. Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 12).
 
 ## Library and retrieval
 
@@ -65,5 +65,6 @@ Last updated 2026-11-08. Notebook column uses the Parts of `docs/notebook-outlin
 | 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | 4, 10.1, 10.4 | Comparison table | ✅ calls, tokens, time, Checker results and accuracy compared (10.1, 10.5). The graph: a third of the input tokens, about twice the output tokens, 32 of 36 densities at 30 µm against 17 |
 | 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 0.2, 0.3, 2.2 | Trace viewer cell | ✅ `ChatGLM` + `set_llm_cache` (SQLite backend) + `TraceRecorder` callback, JSONL per run, `show_trace`. Graph nodes are named automatically once real agents use `glm` |
 | 34 | Every value in the recommendation links to paper and passage | 1.1 | 8.11, 11 | Recommendation with citations | ✅ Part 11 demo: one request from clarification to cited windows per method within the remembered 200 W limit, conflicts explained, approval and resume, trace summary. Windows cite record ids with their chunk ids |
+| 36 | Browser front end: request, question back, windows, evidence with citations, set-aside papers, conflicts with their tree outcome, reasoning per call, approve or reject that resumes the graph | decision 11-08 | 12, `app/` | The app, `tests/test_app.py` | ✅ Streamlit 1.67 over the Part 11 graph with an SQLite checkpointer (`data/app_runs.sqlite`) and the memory store of 9.3. No logic in the app: it runs the 40 notebook cells tagged `core`. App test (AppTest, offline, about 30 s): loads, asks back for the grade, shows L04 and E04 set aside, stops with the plain endpoint message at the Analyst, resumes with Try again, Archimedes window first, Reject without a comment refused, Approve resumes, decision in the SQLite checkpoint, limit in the memory store. Offline the approval part uses a stand-in Analyst until the online rerun caches the new tree answers |
 
-Count on 2026-11-08 (after the clarity gate and the answer key): 35 ✅, 0 🟡, 0 ⬜.
+Count on 2026-11-08 (after the Streamlit app): 36 ✅, 0 🟡, 0 ⬜.

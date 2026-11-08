@@ -20,7 +20,7 @@ Capstone project for the Carnegie Mellon University School of Computer Science E
 course on agentic AI systems (2026). Project type: Research Assistant.
 
 ## Status
-In development. The notebook runs end to end: tools, retrieval over 16 open-access 316L papers, a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, and an evaluation Part that waits only for the hand-checked answer key. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
+In development. The notebook runs end to end: tools, retrieval over 16 open-access 316L papers, a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, an evaluation Part scored on the hand-checked answer key, and a small browser UI. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
 model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 | Checkpoint | Topic | Status |
@@ -36,6 +36,8 @@ model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 ## Repository layout
 ```
 notebooks/     process_window_scout.ipynb: the whole agent, built and tested Part by Part
+app/           small Streamlit page over the notebook's graph (runs the notebook cells tagged "core")
+tests/         app smoke test (Streamlit AppTest)
 docs/          architecture, decisions, model-choice log
 checkpoints/   course checkpoint write-ups and diagrams
 data/          downloaded papers and generated databases (not committed)
@@ -54,3 +56,5 @@ data/          downloaded papers and generated databases (not committed)
 python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
+
+Browser UI: run the notebook once (it fills `data/`), then `python -m streamlit run app/streamlit_app.py` from this folder.

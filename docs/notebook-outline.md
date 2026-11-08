@@ -27,6 +27,7 @@ course concept visible somewhere in the notebook.
 | 9 | When must a human decide? (guardrails) | Human in the loop, guardrails, memory types (M2, M6) | `interrupt` and `Command(resume=...)` for clarification and approval, SQLite checkpointer, LangGraph `Store` for engineer feedback | 22 to 25 |
 | 10 | Does it actually work? (evaluation) | Benchmarking, baselines, "did the extra coordination pay for itself?" (M5) | Traces and cache for cost and latency; scoring against the answer key | 27 to 32 |
 | 11 | End-to-end demo for the video | All of the above | One request through the full graph, trace shown | 34 |
+| 12 | Can someone use it without the notebook? (browser app) | Human in the loop, made usable (M6) | Streamlit over the Part 11 graph: SQLite checkpointer, memory store, `interrupt` and `Command(resume=...)`. The app runs the notebook's cells tagged `core` (`app/notebook_core.py`) | 36 |
 
 Notes:
 - The current Part 5 skeleton (stub agents, made-up papers) becomes Part 8 once the real agents exist.

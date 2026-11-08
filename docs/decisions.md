@@ -432,6 +432,31 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   the existing graph: request form, run or replay from the cache, windows per method, evidence with citations and
   status including the set-aside list, conflicts with their verdicts, approve or reject (which resumes the graph). The
   notebook stays the single source of the logic.
+- **2026-11-08** · Streamlit UI built (Part 12, `app/`). How the app gets the code: every notebook cell that only defines
+  things carries the cell tag `core` (40 cells). `app/notebook_core.py` reads the notebook with nbformat and runs exactly
+  those cells once, in notebook order, in one namespace, inside `st.cache_resource` (about 25 s, once per app start).
+  The app (`app/streamlit_app.py`) calls the same `parse_request`, `build_scout_graph` (clarification, memory, wider
+  search, as in Part 11), `Command(resume=...)` and `redact` as the notebook. To make this possible, 14 cells that ended in
+  a demo were split in two (definitions tagged, demo untagged). The code text only moved, with two exceptions:
+  `STATUS_ORDER` moved up three lines in 6.7, and in 9.2 `STORE_DB = fresh_file(...)` became the path plus a separate
+  `fresh_file(STORE_DB)` in the demo half. A check in 12.1 keeps core cells free of magics, model calls, graph runs and
+  traces, and checks that every name the app takes from the notebook is defined in a core cell. The app test checks that
+  every global the core functions read is defined. · Alternatives: (a) run the whole notebook at app start: about
+  100 s, and it repeats every demo and replays every model call. (b) Move the code into a package: two copies of the
+  truth, or a notebook that only imports, which hides the code the course wants to see. (c) `%%writefile` the logic
+  into a module, as for the MCP server: the server needs its own process, the app does not, and a second copy of the
+  agents would drift. The app file holds only page code, so it is a normal committed file, not written from the
+  notebook. · Same graph and memory as Part 11, but checkpoints go to `data/app_runs.sqlite` (SQLite, so a paused run
+  can be opened again after a restart, as in 9.1). The notebook empties its own demo files on every run, so the app
+  keeps its own. The memory store is the engineer's file of 9.3 (`data/engineer_memory.sqlite`), and the app opens both
+  files for one click and closes them again, so it never locks them while the notebook runs. Replay mode is the
+  notebook's offline mode: every answer from the LLM cache, and a missing one stops the step with "this step needs the
+  model endpoint" (Try again resumes from the saved step). Errors are shown through `redact()`, never with the address.
+  · Testing: `tests/test_app.py` with Streamlit's AppTest, a script and not a notebook cell, because loading the agents
+  takes about 25 s and a notebook cell would load a second embedding model next to the kernel's. Until the online rerun
+  caches the Tree of Thought answers of the clarity gate round, the real Analyst cannot finish offline, so the test's
+  approval part puts a stand-in Analyst into the session (test only, the app has no hook for it). Installed with the
+  venv's pip: streamlit 1.67.0 (it brought pandas 3.1.1, pyarrow 26.0.1, altair 6.3.0, pydeck 0.9.3, watchdog 7.1.0).
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
