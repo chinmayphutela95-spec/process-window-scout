@@ -396,6 +396,15 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   this version is above 10,000, so `run_config` always sets one. The LangGraph vocabulary table of Part 8 became the
   glossary in Part 0.
 
+- **2026-11-08** · Answer key pre-filled by a different model, then checked row by row by me (my proposal, agreed
+  2026-11-08). Claude (Opus 5.5) read only the papers' XML, the review sheets and `eval/README.md`, never the agent's
+  outputs, and wrote `eval/prefill/answer_key_prefill.csv` (93 rows, 32 marked "check") with the exact location and the
+  printed string of every value. That file stays frozen, so the difference to the final key measures the pre-fill's
+  errors. I type L07 and L03 blind first and compare them with the pre-fill, then check every other row against the
+  paper (`checked` = ok or fixed). Only checked rows are scored. · Typing about 90 rows by hand would take hours I do not
+  have. A pre-fill by GLM-5.2 would share the Reader's blind spots and flatter its score, so the pre-fill comes from a
+  different model family, and the blind sample gives a number for how far it can be trusted.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
@@ -410,6 +419,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-11-07 | Analyst (Part 7) | Tree of Thought (generator + critic, GLM-5.2 json_schema, 16,000 tokens) vs one thinking call | known cases: both pick the right cause. L04 vs L07: tree regime (Resolved), single call method (low) | tree kept, retrieval per branch and thresholds to tune |
 | 2026-11-07 | Reader with the three fixes (µm label, mean tables, method sentences) | same GLM-5.2 json_schema Reader, one call per density table | 23 of 24 units answered in 7 to 82 s, L08 Table 4 ran past 20 minutes three times (left out) | kept, L08 Table 4 open |
 | 2026-11-07 | MCP client for LangChain | `langchain-mcp-adapters` 0.3.2 vs own bridge (fastmcp `Client` + `StructuredTool`) | adapter needs mcp below 2.0, fastmcp 4.1 needs mcp 2.x | own 15-line bridge |
+| 2026-11-08 | Answer-key pre-fill (evaluation, not the agent) | typing by hand vs GLM-5.2 vs Claude Opus 5.5 | GLM would share the Reader's errors, hand typing too slow | Claude Opus 5.5, every row checked by me, blind sample on L07 and L03 |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.
