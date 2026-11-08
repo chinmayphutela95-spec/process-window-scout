@@ -8,10 +8,8 @@ from the agent's output.
 1. **Pre-fill by a different model.** Claude read only the papers, the review sheets and the rules below, never the
    agent's outputs, and wrote `prefill/answer_key_prefill.csv`. Each row names where its values are (`where`), how they
    are printed (`printed_as`) and whether it needs a closer look (`confidence` = high or check). This file stays frozen.
-2. **Blind sample.** I type L07 and L03 myself into `answer_key.csv` before opening the pre-fill. Comparing the two
-   shows how far the pre-fill can be trusted.
-3. **Check every row.** The other rows go into `answer_key.csv` with the extra columns. I check each one against the
-   paper and set `checked` to `ok` or `fixed`. Only checked rows are scored.
+2. **Check every row.** All rows go into `answer_key.csv` with the extra columns. I check each one against the
+   paper and set `checked` to `ok` or `fixed`. Only checked rows are scored. The share of rows marked `fixed` measures the pre-fill.
 
 ## Files
 
