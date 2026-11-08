@@ -20,7 +20,7 @@ Capstone project for the Carnegie Mellon University School of Computer Science E
 course on agentic AI systems (2026). Project type: Research Assistant.
 
 ## Status
-In development: Part 1 (deterministic tools), the GLM-5.2 client and Part 3a (retrieval over open-access papers) are built and tested. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
+In development. The notebook runs end to end: tools, retrieval over 16 open-access 316L papers, a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, and an evaluation Part that waits only for the hand-checked answer key. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
 model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 | Checkpoint | Topic | Status |
@@ -29,7 +29,7 @@ model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 | 2.1 | Agent design refinement | Submitted |
 | 3.1 | RAG and retrieval design | Submitted |
 | 4.1 | Tree of Thought integration | Submitted |
-| 5.1 | Multi-agent architecture | Planned |
+| 5.1 | Multi-agent architecture | Submitted |
 | 6.1 | Safety guardrails and human intervention | Planned |
 | 7.1 | Final report and presentation | Planned |
 
