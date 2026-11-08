@@ -2,3 +2,5 @@
 *.docx binary
 *.png binary
 *.pdf binary
+# The checked answer key is frozen byte for byte (BOM and CRLF as saved by Excel)
+eval/answer_key.csv -text
