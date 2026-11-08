@@ -406,6 +406,33 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   have. A pre-fill by GLM-5.2 would share the Reader's blind spots and flatter its score, so the pre-fill comes from a
   different model family, and the rows I fix give a number for how far it can be trusted.
 
+- **2026-11-08** · Clarity gate (Chinmay's decision): a step right after the Checker, a named graph node (`clarity`) before
+  the wider search, the conflict search and the windows. Pure code, no model call, run on every value: (1) exact number,
+  none of approximately, approx., about, around, nearly, roughly, up to, below, above, less than, more than, over,
+  under, higher than, greater than, lower than, at least, at most, ~, ≈, <, >, ≤, ≥ among the few words before the
+  printed value, in text and in table cells. (2) A value from running text sits in a sentence that names the sample,
+  its power or its speed as printed. A link only through an energy density does not count. Table values pass rule 2,
+  because check 11 already proves the row. (3) Plain 316L: no nonzero additive in the sample label (2 wt% TiC). A
+  failing record stays visible as "unclear, not used" or "not plain 316L" with its reason and is never used for bounds,
+  conflicts or consensus. A paper with no usable record left is listed as "set aside: density not clearly reported",
+  in the run report and in the interrupt payload at the approval pause. · Per value and not per paper, because a
+  paper rule ("no density table, skip") would also drop E03 to E06, which print exact values in their text and carry
+  most of the 30 µm Archimedes evidence (E03 I-67° 99.86 %, E05 S1 99.68 % and S2 99.99 %). On the current records
+  the gate leaves out exactly the expected six: L04 0.04 % ("approximately") and 2 % ("about"), so L04 is set aside,
+  E04 samples 1 and 8 (tied only through 155 and 79 J/mm³), so E04 is set aside too (it has no other record), and
+  E06's 2 and 4 wt% TiC rows. The 30 µm Archimedes window does not change (165 to 225 W, 600 to 800 mm/s, 4 records),
+  the "not stated" window from E04 disappears, and the conflict search still finds the two E06 against L06 S9 pairs. Their
+  trees change, because E06's own-paper regime check no longer compares plain 316L with its TiC composites. E03, E05 and the E06
+  plain 316L row pass, and no table value changes. I added five bound phrases to the agreed list (higher than, greater
+  than, lower than, at least, at most), for the same reason as "above" and "below".
+- **2026-11-08** · Plain-316L filter (Chinmay's decision), part of the clarity gate: a sample with a nonzero additive is
+  not plain 316L evidence. "316L (0 wt% TiC)" is the plain control and stays. · E06 says so itself (3.12), but its 2 and
+  4 wt% TiC rows were verified and used in the consensus and in E06's own-paper regime check.
+- **2026-11-08** · Streamlit UI: go (Chinmay's decision), built after the clarity gate and the scoring, as a small app over
+  the existing graph: request form, run or replay from the cache, windows per method, evidence with citations and
+  status including the set-aside list, conflicts with their verdicts, approve or reject (which resumes the graph). The
+  notebook stays the single source of the logic.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|

@@ -4,7 +4,7 @@ Every capability promised in the course checkpoints, where it lives in the noteb
 shows it works. The final report and video should point to the "Evidence" column. Status: ✅ built and tested
 on real data, 🟡 built but only on made-up data or partly, ⬜ not built yet.
 
-Last updated 2026-11-07 (after Session E). Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 11).
+Last updated 2026-11-08. Notebook column uses the Parts of `docs/notebook-outline.md` (0 to 11).
 
 ## Library and retrieval
 
@@ -14,7 +14,7 @@ Last updated 2026-11-07 (after Session E). Notebook column uses the Parts of `do
 | 2 | Parse full text including tables | 3.1 | 3.1, 3.11 | Parsed table next to the original | ✅ tables also rendered to HTML with merged cells for the answer-key sheets |
 | 3 | Alloy label + metadata filter (similarity trap) | 3.1 | 3.6 | Distractor ranks 7th without the filter | ✅ |
 | 4 | Chunking (250 words, 50 overlap, tables whole) | 3.1 | 3.3 | Chunk counts | ✅ |
-| 5 | Chunking experiment (chunk size, tables whole vs split) | new | 10.6 | Retrieval recall@5 against the answer key | 🟡 built (Session E): recall@5 for v1 windows vs v2 splitter, tables whole vs split (0.71 to 0.77). Runs on a provisional key of Checker-verified v2 records and switches to `eval/answer_key.csv` once it has rows |
+| 5 | Chunking experiment (chunk size, tables whole vs split) | new | 10.6 | Retrieval recall@5 against the answer key | ✅ recall@5 on the checked key (85 values): v1 windows 0.68 tables whole, 0.74 split, v2 splitter 0.72 either way. Differences of a few values, so tables stay whole |
 | 6 | Qwen3 embeddings, ChromaDB, MMR, max 2 per paper | 3.1 | 3.4, 3.5, 3.10 | MMR changed 8 of 8 result lists | ✅ v1 hand-written. v2 with LangChain `Chroma` + MMR retriever + alloy filter, cap applied after MMR |
 | 7 | Stated-conditions lookup (layer thickness) | 3.1 | 3.7, 3.9 | Conditions printed per paper | ✅ works on both libraries |
 | 8 | With vs without retrieval, invented citations caught | 2.1, 3.1 | 3.8 | Two answers side by side; citation check | ✅ invented citations checked in code: none of the 4 studies exists in Crossref as written, every grounded citation points to a real passage |
@@ -51,18 +51,19 @@ Last updated 2026-11-07 (after Session E). Notebook column uses the Parts of `do
 | 24 | Persistent state (SQLite checkpointer), evidence store across runs | 2.1, 5.1 | 9.1 | Resume after kernel restart | ✅ SQLite checkpointer: paused run resumed by a fresh graph on a fresh connection. Evidence table in SQLite with SQL queries |
 | 25 | Engineer-feedback memory changes a later run | 2.1 | 9.3 | Constraint (e.g. 400 W limit) filters run 2 | ✅ a 200 W limit from run 1 (LangGraph `SqliteStore`) filters run 2. A 400 W limit would change nothing |
 | 26 | Widen to neighbouring layer thickness, mark "adjacent" | 2.1 | 8.14 | Sparse request widened | ✅ `widen_node`: fewer than 10 verified records meeting the request, one search at the nearest thinner and thicker layer (within 50 %), marked adjacent, never bounds. With the extension 10 records meet 30 µm (no widening). On v2 alone 7 do, and it widens to 20 and 40 µm |
+| 35 | Clarity gate: exact number, tied to its sample, plain 316L (input-quality guardrail) | decision 11-08 | 6.8, 8.11 | Records left out with reasons, set-aside list at the approval pause | ✅ on the final records (gate code run on the stored run): L04 and E04 set aside (approximate values, or tied only through an energy density), E06 2 and 4 wt% TiC not plain 316L. E03, E05 and every table value pass. The graph run with the gate waits for the endpoint |
 
 ## Evaluation and traceability
 
 | # | Capability | Promised in | Notebook | Evidence to show | Status |
 |---|---|---|---|---|---|
-| 27 | Hand-checked answer key | 1.1 | 3.11, `eval/` | CSV, checked by Chinmay | 🟡 sheets, template and scope ready (L08 only Table 5). Chinmay fills it |
-| 28 | Extraction accuracy per field | 1.1, 5.1 | 10.1 | Accuracy table | 🟡 scoring code ready and tested on a synthetic key, waits for the answer key |
+| 27 | Hand-checked answer key | 1.1 | 3.11, `eval/` | CSV, checked by Chinmay | ✅ 93 checked rows (84 pre-filled by another model from the papers only, 9 typed by Chinmay), 1 pre-filled row fixed. No blind sample. Committed byte for byte (2026-11-08) |
+| 28 | Extraction accuracy per field | 1.1, 5.1 | 10.1 | Accuracy table | ✅ graph, v2, L08 from Table 5: recall 0.87, precision 0.98, density 74 of 91 right, power 72 of 88, speed 74 of 86. Weakest: L08 cross-table lookups |
 | 29 | Planted (corrupted) records caught | 1.1, 5.1 | 6.3, 6.4, 10.3 | Caught / missed table | ✅ 5 of 5 caught after the column check (4 of 5 before) |
-| 30 | Prompt-only baseline vs agent | 2.1 | 3.8, 4, 10.1 | Same questions, both scored | 🟡 prompt-only answer checked in code (3.8), single agent built (Part 4, Session C schema: two reruns with the µm label timed out). Scoring waits for the key |
+| 30 | Prompt-only baseline vs agent | 2.1 | 3.8, 4, 10.1 | Same questions, both scored | ✅ prompt-only answer checked in code (3.8). Single agent at 30 µm: recall 0.65, 17 of 36 densities right, against the graph's 0.92 and 32 of 36. The single agent uses the older um label |
 | 31 | Tree of Thought vs single thinking call | 4.1 | 7.2, 8.12, 10.2 | 2 to 3 conflicts compared | ✅ 5 cases: tree and single call agree on the cause in all five. Three-rubric comparison in 8.12 |
-| 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | 4, 10.1, 10.4 | Comparison table | 🟡 calls, tokens, time, records and Checker results compared (graph: 137k input tokens against 434k, about twice the output tokens). Accuracy waits for the key |
+| 32 | Multi-agent vs single agent (accuracy, calls, run time) | 5.1 | 4, 10.1, 10.4 | Comparison table | ✅ calls, tokens, time, Checker results and accuracy compared (10.1, 10.5). The graph: a third of the input tokens, about twice the output tokens, 32 of 36 densities at 30 µm against 17 |
 | 33 | Every model call traced (prompt, reasoning, answer, tokens, time) and cached | conventions | 0.2, 0.3, 2.2 | Trace viewer cell | ✅ `ChatGLM` + `set_llm_cache` (SQLite backend) + `TraceRecorder` callback, JSONL per run, `show_trace`. Graph nodes are named automatically once real agents use `glm` |
 | 34 | Every value in the recommendation links to paper and passage | 1.1 | 8.11, 11 | Recommendation with citations | ✅ Part 11 demo: one request from clarification to cited windows per method within the remembered 200 W limit, conflicts explained, approval and resume, trace summary. Windows cite record ids with their chunk ids |
 
-Count on 2026-11-07 (after Session E): 29 ✅, 5 🟡, 0 ⬜.
+Count on 2026-11-08 (after the clarity gate and the answer key): 35 ✅, 0 🟡, 0 ⬜.
