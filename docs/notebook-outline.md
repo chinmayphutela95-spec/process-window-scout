@@ -36,17 +36,20 @@ Notes:
 - Fine-tuning (Module 5) is not used: one paragraph in Part 10 explains why RAG fits changing literature
   better than tuning.
 
-## Documentation standard (agreed 2026-11-07)
+## Documentation standard (agreed 2026-11-07, shortened 2026-11-08)
 
-The notebook must read as one logical argument from request to approved window, so every rule and threshold is
-explained where it is used:
+The notebook reads as one short argument from request to approved window, in Chinmay's voice (an AM engineer explaining
+his own tool to another engineer: first person, plain words, short sentences, no em or en dashes, no semicolons, no
+filler words). About 6,000 to 7,000 words of markdown in total.
 
-- **In each Part:** state the rule in plain words, give each parameter with the reason it has that value (or say it is
-  engineering judgement and point to the check that shows its effect, for example the tolerance sensitivity table in
-  8.12), say what evidence shows it works, and name its known limitations and failures honestly. A worked case that
-  went wrong and was fixed (L04 vs L07) is told in full.
-- **Near the top (Part 0):** a short "how the pieces fit" narrative (request, clarification, retrieval, Reader,
-  Checker, conflicts, Analyst, window, approval) and a "rules and thresholds" table: rule, value, reason, where it is
-  defined, decision date in `docs/decisions.md`.
-- **At the end of each Part:** a two- or three-line "what this step showed" summary that leads into the next Part.
-- **Voice:** Chinmay's, first person, plain, no em or en dashes, no semicolons.
+- **Each Part opens** with one sentence linking it to the previous Part (what that Part left open), then four one-line
+  bullets: Question, Course concept, Framework feature, Evidence.
+- **Each subsection** has at most about 60 to 80 words: what this step does, why, and what to look at in the output.
+  An agent term is explained the first time it appears.
+- **Every rule keeps its reason** in one sentence. Long implementation detail lives in `docs/decisions.md`, with a
+  one-line pointer such as "details: decisions.md, 2026-11-07".
+- **Failures stay**, each told in a few lines (L04 vs L07, the L08 Table 4 skip, the baseline's older label, the
+  Reader's repeatability).
+- **Each Part ends** with "what this showed" in two lines.
+- **Part 0 holds** the "how the pieces fit" list (one line per step), the rules table (rule, value, short reason,
+  where, decision date), a glossary of about ten agent words and a 15-minute reading guide.

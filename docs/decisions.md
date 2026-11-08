@@ -381,6 +381,21 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   limit remembered in 9.3 (52 records above it left out), explains two conflicts and pauses for approval, then resumes.
   48 model calls (all replayed), one line of reasoning per call so it fits on screen, trace summary at the end.
 
+- **2026-11-08** · Notebook text shortened (Session F, markdown only): about 18,500 words to about 7,000. Each Part opens
+  with one sentence linking it to the previous Part and four one-line bullets, each subsection says what it does, why
+  and what to look at, and each Part ends with two lines of "what this showed". Part 0 gained a glossary of agent words
+  and a 15-minute reading guide, and the rules table keeps a short reason per rule. · Chinmay ran the notebook in VS
+  Code and found it hard to follow. Details that left the notebook and were not recorded here before:
+  `ChatGLM` sets `disable_streaming=True` so every call takes the same path through its overrides, and LangChain's
+  `content_blocks` view does not show GLM's reasoning, so `reasoning_of` is the one place it is read. The cache keeps
+  one SQLite connection because reopening the file failed about one time in fifteen (most likely the virus scanner
+  holding it). The 2-per-paper cap is applied after LangChain's MMR retriever, which has no per-paper limit (it returns
+  15, the cap keeps the first 5 that respect it). Energy density is coarse (Bertoli et al., 2017). The old check
+  `has_parameter_table` also accepted energy-density tables, so the frozen library uses `density_tables`. A new
+  `thread_id` means a fresh evidence table, reusing one continues the old run. LangGraph's default `recursion_limit` in
+  this version is above 10,000, so `run_config` always sets one. The LangGraph vocabulary table of Part 8 became the
+  glossary in Part 0.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
