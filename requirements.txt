@@ -17,3 +17,5 @@ langchain-openai
 langchain-chroma
 langchain-text-splitters
 langgraph
+langgraph-checkpoint-sqlite
+streamlit
