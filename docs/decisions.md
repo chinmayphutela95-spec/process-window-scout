@@ -499,6 +499,8 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   to 225 W, 600 to 800 mm/s, h 70 to 120 µm (4 records, 3 papers), unchanged. With my stored 200 W limit (9.3, Part 11):
   Archimedes 165 to 175 W, 600 to 800 mm/s, h 70 to 120 µm (E03 I-67° and E05 S1), image analysis 150 to 180 W (4
   records, L06 only). The limit leaves out 54 verified records, among them E05 S2 (225 W) and L07 high-VED (220 W).
+  The app (Part 12) now reaches approval with the real Analyst, online and offline, so its test no longer needs the
+  stand-in. A browser run of the Part 11 request showed the same capped window and both trees with their points.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
