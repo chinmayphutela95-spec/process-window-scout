@@ -457,6 +457,23 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   caches the Tree of Thought answers of the clarity gate round, the real Analyst cannot finish offline, so the test's
   approval part puts a stand-in Analyst into the session (test only, the app has no hook for it). Installed with the
   venv's pip: streamlit 1.67.0 (it brought pandas 3.1.1, pyarrow 26.0.1, altair 6.3.0, pydeck 0.9.3, watchdog 7.1.0).
+- **2026-11-09** · Check 16, one sample, one parameter set (Chinmay's decision, code in 6.4, part of `check_record_full`).
+  If the paper has a parameter table (a table whose header names power and speed) with a row for the record's sample,
+  the record's power, speed, hatch and layer must equal that row, as printed or after a factor of 1000. A failure goes
+  the normal way: one retry to the Reader with the reason (both values and both tables), then "not verified". Guards
+  against false alarms: if the record's own table prints its parameters, that row decides and no other table is
+  asked, because a paper may reuse a label for another study. A label found in two parameter tables, or in none, is not
+  judged. A trailing HIP, HT, annealed or stress relieved is dropped from the label ("13 HIP_1" is sample 13), because a
+  post-treatment does not change how the part was built. "This work sample 13 SLM" (L08 Table 8) and "Sample 5, ROI R1"
+  (Table 6) are not matched to Table 1: their values are right, and a looser match would invite false alarms. · Found by
+  the evaluation (10.5): for L08 sample 13 the Reader took 200 W from another row of Table 1, where sample 13 has 350 W.
+  The number was in the cited passage and in the power column, so checks 11 and the column check passed. On the
+  Reader's first attempt (148 records) check 16 judges 89 records and flags exactly three, all L08 sample 13 from Table 5
+  (as-built, HIP_1, HIP_2), each 200 W against Table 1's 350 W. I checked each against the paper: all three are real
+  errors. In the graph the three went back to the Reader once with the reason, and the retry corrected all three to
+  350 W, so they ended verified. Because the check came from the evaluation, the scores after it are no longer a blind measure. Part 10 shows both. Before (run of
+  7 November, scored 8 November): recall 0.87, precision 0.98, power 72 of 88, L08 power 6 of 18. After (run of
+  9 November): recall 0.87, precision 0.98, power 75 of 88, L08 power 9 of 18, every other field unchanged.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
