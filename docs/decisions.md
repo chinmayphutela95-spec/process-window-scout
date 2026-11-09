@@ -469,11 +469,36 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   the evaluation (10.5): for L08 sample 13 the Reader took 200 W from another row of Table 1, where sample 13 has 350 W.
   The number was in the cited passage and in the power column, so checks 11 and the column check passed. On the
   Reader's first attempt (148 records) check 16 judges 89 records and flags exactly three, all L08 sample 13 from Table 5
-  (as-built, HIP_1, HIP_2), each 200 W against Table 1's 350 W. I checked each against the paper: all three are real
-  errors. In the graph the three went back to the Reader once with the reason, and the retry corrected all three to
-  350 W, so they ended verified. Because the check came from the evaluation, the scores after it are no longer a blind measure. Part 10 shows both. Before (run of
+  (as-built, HIP_1, HIP_2), each 200 W against Table 1's 350 W. All three are real errors: my checked key gives sample
+  13 350 W in each row. In the graph the three went back to the Reader once with the reason, and the retry corrected
+  all three to 350 W, so they ended verified. Because the check came from the evaluation, the scores after it are no
+  longer a blind measure. Part 10 shows both. Before (run of
   7 November, scored 8 November): recall 0.87, precision 0.98, power 72 of 88, L08 power 6 of 18. After (run of
   9 November): recall 0.87, precision 0.98, power 75 of 88, L08 power 9 of 18, every other field unchanged.
+
+- **2026-11-09** · Online rerun after the clarity gate and check 16: Restart & Run All online twice, then fully offline.
+  Tree results on the two conflicts the gate changed. E06's own-paper regime check no longer has the TiC rows, so the
+  E06 side gets no regime fact. (1) E06 316L 96.3 % by Archimedes against L06 S9 99.53 % by image analysis (both 180 W,
+  30 µm, 100 against 90.9 J/mm³): method, Competing, +5 (a method sentence from each paper +6, the code check that the
+  methods differ +2, a contradicting quote -3), lead 4. The single call also says method. Physically sensible: L06
+  measured the same S9 part at 94.6 % by Archimedes, so with matched methods the gap reverses, and one polished section
+  misses pores outside its plane. The -3 is a weak spot: the critic took L06's sentence that it used Archimedes as a
+  contradiction, though the 99.53 % is L06's image-analysis value. So method is understated and Competing is cautious.
+  (2) E06 96.3 % against L06 S9 94.6 %, both by Archimedes: regime, Competing, +5 (L06's sentence that an energy density
+  above 90 J/mm³ is recommended +3, the code check that S9 sits on its paper's lack-of-fusion side +2), lead 5. The
+  single call also says regime. Plausible in direction, since S9 sits right at its own paper's threshold and E06 is 10 %
+  higher, but weak: the gap is 1.7 points, close to the scatter of Archimedes on porous parts, both parts are below
+  97 %, and E06 at 100 J/mm³ is porous too, which an energy density alone does not explain. Competing is the right band.
+  Machine and powder found no sentence in either paper and scored -2. I did not tune anything. · Why two online runs: in
+  the first, the method critic of pair 1 stopped at the token limit, so that branch had no answer and pair 1 came out
+  Unresolved (reporting +1). Part 9 ran the same tree again, the call succeeded and was cached. A failed call is never
+  cached, so a rerun can change a tree. The second online run replayed every call (0 new, 0 errors), and 8.11, Part 9
+  and Part 11 now show the same trees. Run times: first online 317 s (8.11 graph run 143 s, 10 new model calls: the L08
+  retry, 8 tree calls and one single-call comparison), second online 138 s, offline 149 s with 0 skipped cells (350
+  checks offline, 352 online, the two extra are the live call of Part 2). · Windows at 30 µm and 99.5 %: Archimedes 165
+  to 225 W, 600 to 800 mm/s, h 70 to 120 µm (4 records, 3 papers), unchanged. With my stored 200 W limit (9.3, Part 11):
+  Archimedes 165 to 175 W, 600 to 800 mm/s, h 70 to 120 µm (E03 I-67° and E05 S1), image analysis 150 to 180 W (4
+  records, L06 only). The limit leaves out 54 verified records, among them E05 S2 (225 W) and L07 high-VED (220 W).
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
