@@ -502,6 +502,23 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   The app (Part 12) now reaches approval with the real Analyst, online and offline, so its test no longer needs the
   stand-in. A browser run of the Part 11 request showed the same capped window and both trees with their points.
 
+- **2026-11-09** · One retry for a cut-off Tree of Thought call (Chinmay's decision, `invoke_or_none` in 7.1). A generator,
+  critic, follow-up or single call whose answer stops at the token limit (LengthFinishReasonError) or cannot be read (a
+  JSON or schema error) is sent once more, as the same call. A second failure, or any other error, still counts as no
+  answer for that branch. The trace names the second call "(retried after token limit)", and the tree log and the
+  Analyst's run-log line say so too. · Why: in the first online run of 9 November the method critic of pair 1 stopped at
+  the 16,000-token limit, and pair 1 fell from Competing to Unresolved in 8.11. A tree result hung on one failed call.
+  · Why the same call, and not more tokens or a "keep it brief" note: the client fails before anything is cached, so the
+  second try really goes to the model, and its answer is cached under the call's own key. Every later replay, online or
+  offline, then gets that answer without a retry, so reruns stay stable. More tokens or a changed prompt would give the
+  retry another cache key, so each online rerun would send the failing call again and could change the tree, and a
+  changed prompt would also ask the critic a slightly different question. The 9 November cut-off was a one-off: the same
+  call, sent again in Part 9, finished in 16 s. Timeouts are not retried, because one tree call may run 20 minutes.
+  · Cut-off calls so far: the cache holds 110 tree calls (70 critic, 17 single call, 12 generator, 11 follow-up), all
+  complete, the longest 11,503 of 16,000 output tokens. A cut-off is never cached, so the count comes from the runs: 2 in
+  all online runs on record, one in the first Session E run (7 November, see above) and the method critic of pair 1 in
+  the first run of 9 November.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
