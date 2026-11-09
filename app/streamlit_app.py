@@ -51,7 +51,8 @@ def scout_graph():
     s.analyst = s.analyst or nb.ToTAnalyst()
     try:
         yield nb.build_scout_graph(nb.GLMReader(), s.analyst, nb.REAL_LIBRARY, checkpointer=nb.SqliteSaver(runs),
-                                   judge=nb.check_record_full, guardrails=True, store=store, widen=True), store
+                                   judge=nb.check_record_full, guardrails=True, store=store, widen=True,
+                                   writer=nb.writer_llm), store
     finally:
         runs.close()
         memory_file.close()
@@ -146,6 +147,14 @@ if s.error or stalled:
 if stalled and st.button("Try again", key="retry"):
     advance(None)                                               # None = carry on from the last saved step
 
+# ---------- the answer: the Writer's short text (9.5), checked by code, before any table ----------
+
+if values.get("answer"):
+    with st.container(border=True):
+        st.markdown("**Answer**")
+        st.markdown(values["answer"]["text"])
+        st.caption(values["answer"]["caption"])
+
 # ---------- 2. clarification ----------
 
 if waiting and "ask" in waiting:
@@ -228,38 +237,39 @@ if records:
              "record": r["id"]} for r in records]
     order = {status: n for n, status in enumerate(nb.STATUS_ORDER)}
     rows.sort(key=lambda x: (order.get(x["status"].split(",")[0], 99), x["window"] == "", x["paper"]))
-    st.markdown("**Evidence table**")
-    present = list(dict.fromkeys(x["status"] for x in rows))
-    shown = st.multiselect("Statuses shown", present, default=present, key="statuses")
-    st.dataframe(pd.DataFrame([x for x in rows if x["status"] in shown]), hide_index=True, height=320)
+    with st.expander(f"Evidence table ({len(rows)} records)"):              # collapsed: the answer and the windows come first
+        present = list(dict.fromkeys(x["status"] for x in rows))
+        shown = st.multiselect("Statuses shown", present, default=present, key="statuses")
+        st.dataframe(pd.DataFrame([x for x in rows if x["status"] in shown]), hide_index=True, height=320)
 
     if values.get("set_aside"):
-        st.markdown("**Set aside: density not clearly reported**")
-        for p in values["set_aside"]:
-            with st.expander(f"{p['short']} {p['paper_id']}: {p['why']} ({len(p['reasons'])} records)"):
+        with st.expander(f"Set aside: density not clearly reported ({len(values['set_aside'])} papers)"):
+            for p in values["set_aside"]:
+                st.markdown(f"**{p['short']}** {p['paper_id']}: {p['why']} ({len(p['reasons'])} records)")
                 for reason in p["reasons"]:
                     st.write(reason)
 
-    st.markdown("**Conflicts and the Analyst's explanation (Tree of Thought)**")
-    explained = {"|".join(e["ids"]): e for e in values.get("explanations", [])}
-    if "conflicts" in values and not values["conflicts"]:
-        st.write("No conflicts among the evidence for this request, so the Analyst was not needed.")
-    for c in values.get("conflicts", []):
-        e, (a, b) = explained.get("|".join(c["ids"]), {}), c["records"]
-        st.write(f"{nb.SHORT[a['paper_id']]} {a.get('sample_label')} ({a['density_pct']} %, {nb.method_key(a) or 'method not stated'}) vs "
-                 f"{nb.SHORT[b['paper_id']]} {b.get('sample_label')} ({b['density_pct']} %, {nb.method_key(b) or 'method not stated'}) "
-                 f"at {c['layer_um']:g} µm" + (f", tagged {', '.join(c['tags'])}" if c.get("tags") else ""))
-        if not e:
-            st.write("Not explained yet: the run stopped before the Analyst finished.")
-            continue
-        cause = f"Favoured cause: **{e['favoured']}** (tier {e['tier']})." if e["favoured"] != "-" else "No cause has enough support."
-        st.write(f"Outcome: **{e.get('band')}**. {cause} {e['explanation']}")
-        tree = (getattr(s.analyst, "trees", None) or {}).get("|".join(e["ids"]))
-        if tree:
-            st.dataframe(pd.DataFrame([{"cause": x["id"], "points": x.get("score"), "tier": x.get("tier"),
-                                        "in beam": bool(x.get("in_beam")), "what earned them": ", ".join(x.get("parts") or {})}
-                                       for x in tree["branches"] if "score" in x]), hide_index=True)
-    st.caption("Evidence tiers. " + TIERS)
+    conflicts = values.get("conflicts", [])
+    with st.expander(f"Conflicts and the Analyst's explanation ({len(conflicts)})"):
+        explained = {"|".join(e["ids"]): e for e in values.get("explanations", [])}
+        if "conflicts" in values and not conflicts:
+            st.write("No conflicts among the evidence for this request, so the Analyst was not needed.")
+        for c in conflicts:
+            e, (a, b) = explained.get("|".join(c["ids"]), {}), c["records"]
+            st.write(f"{nb.SHORT[a['paper_id']]} {a.get('sample_label')} ({a['density_pct']} %, {nb.method_key(a) or 'method not stated'}) vs "
+                     f"{nb.SHORT[b['paper_id']]} {b.get('sample_label')} ({b['density_pct']} %, {nb.method_key(b) or 'method not stated'}) "
+                     f"at {c['layer_um']:g} µm" + (f", tagged {', '.join(c['tags'])}" if c.get("tags") else ""))
+            if not e:
+                st.write("Not explained yet: the run stopped before the Analyst finished.")
+                continue
+            cause = f"Favoured cause: **{e['favoured']}** (tier {e['tier']})." if e["favoured"] != "-" else "No cause has enough support."
+            st.write(f"Outcome: **{e.get('band')}**. {cause} {e['explanation']}")
+            tree = (getattr(s.analyst, "trees", None) or {}).get("|".join(e["ids"]))
+            if tree:
+                st.dataframe(pd.DataFrame([{"cause": x["id"], "points": x.get("score"), "tier": x.get("tier"),
+                                            "in beam": bool(x.get("in_beam")), "what earned them": ", ".join(x.get("parts") or {})}
+                                           for x in tree["branches"] if "score" in x]), hide_index=True)
+        st.caption("Evidence tiers. " + TIERS)
 
 # ---------- 4. approval ----------
 

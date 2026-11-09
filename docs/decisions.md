@@ -628,6 +628,21 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   endpoint sends it. A first attempt with nothing cached still skips the run, because an empty paper would look like a
   paper without data. · Found when the endpoint dropped during E12's retry: E12 HT1 and HT2 replay as not verified
   until the retry is answered.
+- **2026-11-09** · A short answer before approval (Chinmay's request, the Writer of 9.5). The app showed tables and trees
+  but never said in plain words what the agents concluded. GLM-5.2 writes three to six sentences, because turning a
+  structured result into plain words is what a language model does well, and code checks them, because a fluent
+  summary is exactly where an invented number would slip through. The Writer sees only the structured result (windows,
+  limits, method disagreements, conflicts with the Analyst's outcome, set-aside papers), never the papers. Code works out
+  every summary the answer may need (the largest gap, the records a power limit cuts), because with the first prompt the
+  model compared numbers itself: it called 6.08 points the largest L06 gap (it is 6.78) and treated the machine's 200 W
+  as the limit that applied, where the remembered 190 W did. The check: every number and paper code must be in the input
+  (my own request counts), outcome words must be the Analyst's, an orientation answer must say "not a recommendation" and
+  never recommend, a window over several papers must be called a box, no dashes or semicolons, at most 130 words. One
+  retry with the reasons, then a template written by code from the same input, with a caption that says why. A number
+  check cannot catch a true number used for a wrong claim, so the input carries the summaries and I still read the answer
+  next to the tables. · The node sits after `recommend` and before the approval `interrupt`, so the answer is in the
+  state and the checkpoint before I approve. Graphs get it with `writer=` (9.5, Part 11 and the app), 8.11 and 9.1 to
+  9.4 run without it. The four demo requests passed on the first try online.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
@@ -644,6 +659,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
 | 2026-11-07 | Reader with the three fixes (µm label, mean tables, method sentences) | same GLM-5.2 json_schema Reader, one call per density table | 23 of 24 units answered in 7 to 82 s, L08 Table 4 ran past 20 minutes three times (left out) | kept, L08 Table 4 open |
 | 2026-11-07 | MCP client for LangChain | `langchain-mcp-adapters` 0.3.2 vs own bridge (fastmcp `Client` + `StructuredTool`) | adapter needs mcp below 2.0, fastmcp 4.1 needs mcp 2.x | own 15-line bridge |
 | 2026-11-08 | Answer-key pre-fill (evaluation, not the agent) | typing by hand vs GLM-5.2 vs Claude Opus 5.5 | GLM would share the Reader's errors, hand typing too slow | Claude Opus 5.5, every row checked by me, quality = share of rows fixed |
+| 2026-11-09 | Writer, the short answer before approval (9.5) | GLM-5.2 with thinking vs a template written by code only | on the four demo requests GLM's answers read like an engineer and passed the code check at the first try, the template is correct but stiff | GLM-5.2, checked by code, the template as the fallback |
 
 Original constraint (local plan, now superseded for the LLM): 8 GB VRAM → ~4-bit quantised models ≤ ~8B;
 usable context about 8k to 16k tokens. Still relevant if embeddings run locally.

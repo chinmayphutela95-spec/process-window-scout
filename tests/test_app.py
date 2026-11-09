@@ -5,14 +5,17 @@ the agents from the notebook, so it is a script and not a notebook cell. Run it 
 
 1. The app loads and shows the request box, the Run button and whether it is online or replaying.
 2. The Part 11 request is asked back for the grade. After "316L" the run reaches the approval pause, or, when an answer
-   is neither cached nor reachable, stops with the plain "needs the model endpoint" message.
+   is neither cached nor reachable, stops with the plain "needs the model endpoint" message. The short answer of 9.5
+   comes before the window tables, every number in it is in those tables, the conflicts or the request line, and the
+   evidence table, the set-aside papers and the conflicts sit in collapsed sections.
 3. A replayed run reaches approval, and Approve resumes the graph with Command(resume): the decision is in the SQLite
    checkpoint and the power limit in the memory store. If an answer the Analyst needs is missing offline, this part puts
    a stand-in Analyst into the session (the real one would need the endpoint). Everything else is the real graph,
    replayed from the cache.
 4. My own request of 9 November at a layer the library does not have (60 µm): the machine question asks for power and
    spot, the page shows my limits and the default target, says there is no window at 60 µm, shows the orientation windows
-   per neighbouring layer and method with the method-spread pairs, and Reject resumes the graph.
+   per neighbouring layer and method with the method-spread pairs, the answer says they are not a recommendation, and
+   Reject resumes the graph.
 Everything the test writes (its runs, traces and the limit) is removed at the end.
 """
 import builtins
@@ -51,6 +54,35 @@ def page_text(at) -> str:
         parts += [str(e.value) for e in getattr(at.sidebar, kind)]
     parts += [e.value.to_string() for e in at.dataframe]
     return "\n".join(parts)
+
+
+def page_parts(at):
+    """Every element of the main page in page order, with the label of the collapsed section it sits in (or None)."""
+    def walk(node, label):
+        for child in getattr(node, "children", {}).values():
+            yield child, label
+            yield from walk(child, child.label if type(child).__name__ == "Expander" else label)
+    return list(walk(at.main, None))
+
+
+def answer_on_page(at):
+    """The answer text, its position and the numbers in it that the window tables, the conflicts and the request line
+    do not show. The approval part (section 4) and the reasoning (section 5) do not count as a source."""
+    parts = page_parts(at)
+    kinds = [type(e).__name__ for e, _ in parts]
+    start = next(i for i, (e, _) in enumerate(parts) if kinds[i] == "Markdown" and e.value == "**Answer**")
+    text, shown = parts[start + 1][0].value, []
+    for i, (e, label) in enumerate(parts):
+        if kinds[i] == "Subheader" and e.value[:2] in ("4.", "5."):
+            break
+        if i != start + 1 and (label is None or label.startswith("Conflicts")):
+            shown.append(e.value.to_string() if kinds[i] == "Dataframe" else str(getattr(e, "value", "")))
+    first_table = next(i for i, k in enumerate(kinds) if k == "Dataframe")
+    return text, start < first_table, sorted(nb_numbers(text) - nb_numbers(chr(10).join(shown)))
+
+
+def nb_numbers(text):
+    return notebook_core.load_notebook().numbers_in(text)
 
 
 class StandInAnalyst:
@@ -132,8 +164,17 @@ try:
     print(f"     {'reached the approval pause' if reached else 'stopped at the Analyst: an answer is not in the cache'}")
     if reached:
         check("the request line shows the machine's 200 W and the remembered 190 W", "max 200 W (machine), 190 W (remembered)" in page_text(at))
-    check("the clarity gate set L04 and E04 aside, shown on the page",
-          {"L04", "E04"} <= {e.label.split()[0] for e in at.expander if "density not clearly reported" in e.label})
+    aside = [e for e, label in page_parts(at) if label and label.startswith("Set aside") and type(e).__name__ == "Markdown"]
+    check("the clarity gate set L04 and E04 aside, shown on the page", {"L04", "E04"} <= {e.value.split()[0].strip("*") for e in aside})
+    if reached:
+        answer, first, unseen = answer_on_page(at)
+        print(f"     answer: {answer}")
+        check("the short answer comes before the window tables", first)
+        check("every number in it is in the window tables, the conflicts or the request line", not unseen)
+        check("its caption says who wrote it", any(c.value.startswith(("Written by GLM-5.2", "Written by code")) for c in at.caption))
+        check("the evidence table, the set-aside papers and the conflicts are collapsed sections with their counts",
+              all(any(e.label.startswith(t) and e.label.endswith(")") and not e.proto.expanded for e in at.expander)
+                  for t in ("Evidence table (", "Set aside: density not clearly reported (", "Conflicts and the Analyst's explanation (")))
     check("the page shows neither the endpoint address nor the key", nb.redact(page_text(at)) == page_text(at))
 
     print("3. Approve and resume")
@@ -190,6 +231,10 @@ try:
     check("the conflicts part says the Analyst was not needed, or shows its outcome for each conflict",
           "No conflicts among the evidence for this request" in text or "Outcome:" in text)
     check("the approval question says orientation, not recommendation", "not as a recommendation" in text)
+    answer4, first4, unseen4 = answer_on_page(at4)
+    print(f"     answer: {answer4}")
+    check("the short answer comes first, says the orientation windows are not a recommendation, and shows no number "
+          "the page does not", first4 and "not a recommendation" in answer4 and not unseen4)
     at4.text_input(key="note").input("test of the app: orientation only, I will run my own trials")
     at4.button(key="reject").click().run()
     check("Reject resumes the graph and the decision is saved", any(e.value.startswith("Rejected: test of the app") for e in at4.success))
