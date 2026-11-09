@@ -579,6 +579,22 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   window. Part 11: Archimedes 165 to 175 W, 600 to 800 mm/s, h 70 to 120 µm (2 records), and no image-analysis window
   (E01 is above 190 W, L06 is out by the method rule), 69 records above 190 W left out.
 
+- **2026-11-09** · Extension 2 (Chinmay's decision, 3.12): more open-access 316L PBF-LB papers across layer thicknesses,
+  for windows and conflicts, never scored. Selection in code first: the notebook's `search_papers` in 55 queries (the last
+  24 split by quarter, so no result list was cut at 100), CC BY, full-text XML, then `parse_paper`, `density_tables()` and
+  `parameter_tables()`. 865 full texts screened: 363 had no measured density or porosity in any table, 45 a density table
+  but no power and speed per sample, 78 no full-text XML, about 150 another alloy, 125 a review or lattice title, 17 were
+  already in the library. I read the 25 that passed and kept six: E07 PMC8877025 (25 µm, image analysis), E08 PMC7215600
+  and E09 PMC9799015 (30 µm, Archimedes), E10 PMC10582079 (50 µm, image analysis, only its 316L Table 3, Tables 4 and 5
+  are other alloys and skipped in `SKIP_TABLES`), E11 PMC11766599 (50 µm, X-ray CT), E12 PMC7177779 (50 µm, method not
+  stated). The other 19 and their reasons are in `EXT2_REJECTED` in 3.12. · No paper reports a tabulated density with
+  per-sample settings at 20, 40, 60 or 70 to 100 µm, so the target spread (and my 60 µm case) cannot be met from open
+  access. I did not stretch the criteria. A blind reference by another model family is built from the same six XML files.
+- **2026-11-09** · Known detector gap: `density_tables()` does not see a density given only as "RD (%)" next to an
+  absolute density (PMC7178480). Not changed now, because a wider pattern would change the reading units of the frozen v2
+  papers and so their cached Reader answers. PMC7178480 also states only the machine's layer range, so it could not have
+  set a window anyway.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
