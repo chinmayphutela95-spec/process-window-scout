@@ -137,9 +137,7 @@ if not s.thread:
 
 snap, waiting, machine, memory = saved_state()
 values = snap.values
-st.caption(f"Run `{s.thread}`" + (f", read from the request: {values['request']['alloy'] or 'no grade'}, "
-                                  f"{values['request']['machine'] or 'no machine'}, {values['request']['layer_um'] or '?'} µm, "
-                                  f"at least {values['request']['target_density_pct']:g} %" if values.get("request") else ""))
+st.caption(f"Run `{s.thread}`" + (f", read from the request: {nb.describe_request(values['request'])}" if values.get("request") else ""))
 stalled = bool(snap.next) and waiting is None                 # stopped between two steps, not paused for me
 if s.error or stalled:
     st.warning(s.error or "This run stopped before it finished, for example without the model endpoint.")
@@ -168,28 +166,60 @@ if waiting and "ask" in waiting:
 rec, records = values.get("recommendation"), values.get("records", [])
 if records:
     req = values["request"]
-    st.subheader(f"3. Windows at {req['layer_um']:g} µm, at least {req['target_density_pct']:g} %")
+    st.subheader(f"3. Windows at {req['layer_um']:g} µm, at least {req['target_density_pct']:g} %"
+                 + (" (default)" if req.get("target_default") else ""))
+
+    def window_table(windows):
+        st.dataframe(pd.DataFrame([{"density method": w["method"], "records": w["records"], "papers": w["papers"],
+                                    "P (W)": "{:g} to {:g}".format(*w["power_W"]), "v (mm/s)": "{:g} to {:g}".format(*w["speed_mm_s"]),
+                                    "h (µm)": "{:g} to {:g}".format(*w["hatch_um"]), "records cited": ", ".join(w["cites"]),
+                                    **({"spot outside your range": w.get("spot_outside", 0)} if rec.get("spot_range") else {})}
+                                   for w in windows]), hide_index=True)
+
     if not rec:
         st.info("No window yet: the run has not reached the window step.")
     else:
         st.write(f"Status: **{rec['status']}**" + (f", headline bounds from **{rec['method']}** records" if rec.get("method") else "")
-                 + (f". Machine limit from memory: {rec['limits']}, {len(rec.get('blocked_by_limits', []))} records above it "
-                    f"left out" if rec.get("limits") else "") + ".")
-        st.dataframe(pd.DataFrame([{"density method": w["method"], "records": w["records"], "papers": w["papers"],
-                                    "P (W)": "{:g} to {:g}".format(*w["power_W"]), "v (mm/s)": "{:g} to {:g}".format(*w["speed_mm_s"]),
-                                    "h (µm)": "{:g} to {:g}".format(*w["hatch_um"]), "records cited": ", ".join(w["cites"])}
-                                   for w in rec["windows"]]), hide_index=True)
+                 + (f". Machine limit: {rec['limits']} (from your {' and '.join(rec.get('limits_from') or ['memory'])}), "
+                    f"{len(rec.get('blocked_by_limits', []))} records above it left out" if rec.get("limits") else "") + ".")
+        if rec.get("spot_range"):
+            st.caption("Your spot range: {:g} to {:g} µm. ".format(*rec["spot_range"]) + f"{len(rec.get('spot_outside', []))} verified "
+                       "records state a spot outside it. They are tagged in the evidence table, not left out, because most papers do "
+                       "not report the spot.")
+        if rec["windows"]:
+            window_table(rec["windows"])
+        if rec.get("orientation"):
+            st.warning(f"No window at {req['layer_um']:g} µm: no verified record at this layer reaches the target. What follows was "
+                       "measured at a neighbouring layer, for orientation only. It is not a recommendation.")
+            for layer in sorted({w["layer_um"] for w in rec["orientation"]}):
+                here = [w for w in rec["orientation"] if w["layer_um"] == layer]
+                st.markdown(f"**Orientation window: {here[0]['label']}**")
+                window_table(here)
+            if rec.get("method_spread"):
+                st.markdown("**Same sample, two density methods, more than 1 point apart.** Check these before trusting a window "
+                            "from one method.")
+                st.dataframe(pd.DataFrame([{"paper": p["paper"], "sample": p["sample"], "layer (µm)": p["layer_um"],
+                                            "P (W)": p["power_W"], "v (mm/s)": p["speed_mm_s"],
+                                            "method A": p["method_a"], "density A (%)": p["density_a"],
+                                            "method B": p["method_b"], "density B (%)": p["density_b"], "gap": p["gap"]}
+                                           for p in rec["method_spread"]]), hide_index=True)
+        elif not rec["windows"]:
+            st.warning(f"No window at {req['layer_um']:g} µm, and no neighbouring layer reaches the target either.")
     widened = values.get("widened") or {}
     if widened.get("adjacent"):
         st.caption(f"One wider search at {', '.join(f'{t:g}' for t in widened['layers'])} µm: {len(widened['adjacent'])} records "
                    f"marked adjacent. They are shown in the table, never used as bounds.")
 
-    role = {**{i: "bounds" for i in (rec or {}).get("cites", [])}, **{i: "support" for i in (rec or {}).get("supporting", [])},
+    role = {**{i: f"orientation ({w['layer_um']:g} µm)" for w in (rec or {}).get("orientation", []) for i in w["cites"]},
+            **{i: "bounds" for i in (rec or {}).get("cites", [])}, **{i: "support" for i in (rec or {}).get("supporting", [])},
             **{i: "above machine limit" for i in (rec or {}).get("blocked_by_limits", [])}}
-    rows = [{"status": r["status"] + (", adjacent" if r.get("scope") == "adjacent" else ""), "window": role.get(r["id"], ""),
+    outside = set((rec or {}).get("spot_outside", []))
+    rows = [{"status": r["status"] + (", adjacent" if r.get("scope") == "adjacent" else ""),
+             "window": ", ".join(x for x in (role.get(r["id"], ""), "spot outside your range" if r["id"] in outside else "") if x),
              "paper": nb.SHORT.get(r["paper_id"], r["paper_id"]), "sample": r.get("sample_label"),
              "P (W)": r.get("power_W"), "v (mm/s)": r.get("speed_mm_s"), "h (µm)": r.get("hatch_um"), "t (µm)": r.get("layer_um"),
-             "density (%)": r.get("density_pct"), "method": nb.method_key(r) or "not stated",
+             "spot (µm)": r.get("spot_um"), "density (%)": r.get("density_pct"), "method": nb.method_key(r) or "not stated",
+             "condition": r.get("condition"),
              "cited chunk": ", ".join(r.get("chunk_ids", [])), "source": r.get("source"), "reason": r.get("reason"),
              "record": r["id"]} for r in records]
     order = {status: n for n, status in enumerate(nb.STATUS_ORDER)}
@@ -209,7 +239,7 @@ if records:
     st.markdown("**Conflicts and the Analyst's explanation (Tree of Thought)**")
     explained = {"|".join(e["ids"]): e for e in values.get("explanations", [])}
     if "conflicts" in values and not values["conflicts"]:
-        st.write("No conflict between papers, so the Analyst was not needed.")
+        st.write("No conflicts among the evidence for this request, so the Analyst was not needed.")
     for c in values.get("conflicts", []):
         e, (a, b) = explained.get("|".join(c["ids"]), {}), c["records"]
         st.write(f"{nb.SHORT[a['paper_id']]} {a.get('sample_label')} ({a['density_pct']} %, {nb.method_key(a) or 'method not stated'}) vs "
@@ -231,6 +261,7 @@ if records:
 
 if waiting and "recommendation" in waiting:
     st.subheader("4. Approve or reject")
+    st.write(waiting["question"])
     note = st.text_input("Comment (needed to reject)", key="note")
     limit = st.number_input(f"Power limit of '{machine}' in W (optional, remembered for this machine)", min_value=0,
                             value=0, step=10, key="limit")

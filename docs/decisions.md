@@ -519,6 +519,41 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   all online runs on record, one in the first Session E run (7 November, see above) and the method critic of pair 1 in
   the first run of 9 November.
 
+- **2026-11-09** · Chinmay's own app test (run `app-20261109-112948`): "What is the appropriate laser power and speed
+  combinations that I should try if I want to print SS316L with 60 um layers?", machine answer "My machine's power limit
+  is 500W and it can do between 60-100 um spot size", rejected with "I asked for 60 um layers, all the results are shown
+  for 30 um". The library has no 60 µm records (its layers are 20, 30, 40, 50 and 70 µm), and nothing was invented, but
+  the app failed him four ways. Four fixes (Chinmay's decisions), plus one of mine:
+  (1) Orientation windows. Adjacent records still never set the recommended window. But when the requested layer has
+  none, `recommend_node` gives one window per neighbouring layer and density method from the adjacent records that
+  reach the target, labelled "measured at 50 µm, not at your 60 µm, for orientation only, not a recommendation", next to
+  the same-sample pairs at those layers whose two methods differ by more than 1 point. The status is "orientation only"
+  and the approval question asks whether to accept them as a starting point for trials, not as a recommendation.
+  (2) The Analyst gets only pairs at the requested layer and at the neighbouring layers the wider search used. This
+  reverses part of the 11-07 rule "conflicts are searched at every layer": the search still covers every layer for the
+  log and the method spread, but trees about 30 µm pairs did not help a 60 µm request. With no pair there, the log says
+  "no conflicts among the evidence for this request" and the Analyst is skipped. The 30 µm demo keeps both of its
+  conflicts, because they are at 30 µm (check in 9.4).
+  (3) Machine facts in code: a power limit ("power limit is 500W", "500 W limit", "max 400 W", "up to 370 W") and a spot
+  range ("60-100 um spot", "spot size of 70 to 90 µm") from the request or the machine answer. In the request a power
+  counts only next to such a word, because "a 200 W machine" names the machine (so 9.3 still needs my stored limit). In
+  the machine answer every power is the maximum, because the question now asks "Which machine, and its maximum laser
+  power in W (spot size if you know it)?". The power limit works like a stored one (the lower wins), the spot range is
+  shown, and a record whose stated spot is outside it is tagged, never left out, because most papers do not report the
+  spot. The memory key is short ("500 W machine"), not the sentence.
+  (4) A default target says so: "at least 99.5 % (default, you did not give one)".
+  (5) Mine: HIP and heat-treated records never enter a window or an orientation window, though they stay in the evidence
+  table. A furnace closes pores the print left, so such a density says nothing about the print settings. Without this,
+  12 of the 28 records at 50 µm that reach 99.5 % were HIP rows of L08. At 30 µm there is no HIP record, so nothing
+  else changes. · What his request shows now (offline replay with a scripted Analyst, 9.4): 500 W machine, max 500 W, spot
+  60 to 100 µm, 60 µm, at least 99.5 % (default). No window at 60 µm. Orientation at 50 µm, L08 only, h 110 µm:
+  pycnometry 8 records, 200 to 350 W, 650 to 1200 mm/s, image analysis 8 records, 200 to 350 W, 400 to 800 mm/s. Next
+  to them the four L08 samples at 1200 mm/s whose methods disagree: 99.69 against 81.3 %, 99.48 against 84.69 %, 99.35
+  against 91.22 %, 98.55 against 94.88 % (pycnometry against image analysis). So the pycnometry window's upper speed is
+  exactly where image analysis sees lack-of-fusion pores that pycnometry misses, which L08 itself says. No conflicts
+  among the evidence for this request. No record above 500 W. 22 verified records state a spot outside 60 to 100 µm,
+  none of them in the orientation windows (L08: 70 µm).
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|

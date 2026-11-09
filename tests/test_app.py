@@ -7,9 +7,12 @@ the agents from the notebook, so it is a script and not a notebook cell. Run it 
 2. The Part 11 request is asked back for the grade. After "316L" the run reaches the approval pause, or, when an answer
    is neither cached nor reachable, stops with the plain "needs the model endpoint" message.
 3. A replayed run reaches approval, and Approve resumes the graph with Command(resume): the decision is in the SQLite
-   checkpoint and the power limit in the memory store. While the cache lacks the Tree of Thought answers of the clarity
-   gate round, this part puts a stand-in Analyst into the session (the real one would need the endpoint). Everything
-   else is the real graph, replayed from the cache.
+   checkpoint and the power limit in the memory store. If an answer the Analyst needs is missing offline, this part puts
+   a stand-in Analyst into the session (the real one would need the endpoint). Everything else is the real graph,
+   replayed from the cache.
+4. My own request of 9 November at a layer the library does not have (60 µm): the machine question asks for power and
+   spot, the page shows my limits and the default target, says there is no window at 60 µm, shows the 50 µm orientation
+   windows per method with the method-spread pairs, needs no Analyst, and Reject resumes the graph.
 Everything the test writes (its runs, traces and the limit) is removed at the end.
 """
 import builtins
@@ -30,6 +33,8 @@ import notebook_core  # noqa: E402
 APP = REPO / "app" / "streamlit_app.py"
 RUNS_DB, STORE_DB, TRACES = REPO / "data" / "app_runs.sqlite", REPO / "data" / "engineer_memory.sqlite", REPO / "data" / "traces"
 MACHINE = ("limits", "200 W machine")
+MY_REQUEST = "What is the appropriate laser power and speed combinations that I should try if I want to print SS316L with 60 um layers?"
+MY_MACHINE = "My machine's power limit is 500W and it can do between 60-100 um spot size"
 
 
 def check(name, condition):
@@ -150,6 +155,32 @@ try:
           saved["approval"] == {"approved": True, "note": "test of the app: start in the middle of the window",
                                 "limits": {"max_power_W": 190}})
     check("the limit is in the memory store under the machine's name", read_memory() == [(MACHINE, "engineer", {"max_power_W": 190})])
+
+    print("4. A layer the library does not have (my own request of 9 November)")
+    at4 = AppTest.from_file(str(APP), default_timeout=900)
+    at4.run()
+    at4.text_area(key="request").input(MY_REQUEST)
+    at4.button(key="run").click().run()
+    threads.append(at4.session_state["thread"])
+    check("it asks only for the machine, with its maximum power and spot size",
+          [t.key for t in at4.text_input] == ["ask_machine"] and "maximum laser power" in at4.text_input(key="ask_machine").label)
+    at4.text_input(key="ask_machine").input(MY_MACHINE)
+    at4.button(key="continue").click().run()
+    text = page_text(at4)
+    check("no error, and the run reached the approval pause", not at4.exception and any(b.key == "approve" for b in at4.button))
+    check("the request line shows 60 µm, the 500 W limit, the spot range and that the target is the default",
+          all(x in text for x in ("60 µm", "max 500 W", "spot 60 to 100 µm", "(default, you did not give one)")))
+    check("it says plainly that there is no window at 60 µm", any("No window at 60 µm" in w.value for w in at4.warning))
+    check("the orientation window is labelled as measured at 50 µm, for orientation only",
+          "measured at 50 µm, not at your 60 µm, for orientation only, not a recommendation" in text)
+    check("one orientation row per density method", sorted(at4.dataframe[0].value["density method"]) == ["image analysis", "pycnometry"])
+    check("the method-spread pairs next to it show L08 sample 4 at 1200 mm/s, 99.69 against 81.3 %",
+          "81.3" in at4.dataframe[1].value.to_string() and "99.69" in at4.dataframe[1].value.to_string())
+    check("no conflicts among the evidence for this request, so no tree", "No conflicts among the evidence for this request" in text)
+    check("the approval question says orientation, not recommendation", "not as a recommendation" in text)
+    at4.text_input(key="note").input("test of the app: orientation only, I will run my own trials")
+    at4.button(key="reject").click().run()
+    check("Reject resumes the graph and the decision is saved", any(e.value.startswith("Rejected: test of the app") for e in at4.success))
     print(f"All app tests passed in {time.time() - t0:.0f} s.")
 finally:                                                     # leave the files as they were
     if threads and RUNS_DB.exists():
