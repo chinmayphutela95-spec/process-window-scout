@@ -20,7 +20,7 @@ Capstone project for the Carnegie Mellon University School of Computer Science E
 course on agentic AI systems (2026). Project type: Research Assistant.
 
 ## Status
-In development. The notebook runs end to end: tools, retrieval over 16 open-access 316L papers, a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, an evaluation Part scored on the hand-checked answer key, and a small browser UI. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
+In development. The notebook runs end to end: tools, retrieval over 23 open-access 316L papers (10 scored, 13 for the window only), a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, an evaluation Part scored on the hand-checked answer key, and a small browser UI. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
 model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
 
 | Checkpoint | Topic | Status |

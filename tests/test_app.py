@@ -11,12 +11,13 @@ the agents from the notebook, so it is a script and not a notebook cell. Run it 
    a stand-in Analyst into the session (the real one would need the endpoint). Everything else is the real graph,
    replayed from the cache.
 4. My own request of 9 November at a layer the library does not have (60 µm): the machine question asks for power and
-   spot, the page shows my limits and the default target, says there is no window at 60 µm, shows the 50 µm orientation
-   windows per method with the method-spread pairs, needs no Analyst, and Reject resumes the graph.
+   spot, the page shows my limits and the default target, says there is no window at 60 µm, shows the orientation windows
+   per neighbouring layer and method with the method-spread pairs, and Reject resumes the graph.
 Everything the test writes (its runs, traces and the limit) is removed at the end.
 """
 import builtins
 import dis
+import re
 import sqlite3
 import sys
 import time
@@ -173,14 +174,21 @@ try:
     check("the request line shows 60 µm, the 500 W limit, the spot range and that the target is the default",
           all(x in text for x in ("60 µm", "max 500 W", "spot 60 to 100 µm", "(default, you did not give one)")))
     check("it says plainly that there is no window at 60 µm", any("No window at 60 µm" in w.value for w in at4.warning))
-    check("the orientation window is labelled as measured at 50 µm, for orientation only",
-          "measured at 50 µm, not at your 60 µm, for orientation only, not a recommendation" in text)
-    check("one orientation row per density method, and the pycnometry one stops below 1200 mm/s",
-          sorted(at4.dataframe[0].value["density method"]) == ["image analysis", "pycnometry"]
-          and "1200" not in at4.dataframe[0].value.set_index("density method").loc["pycnometry", "v (mm/s)"])
+    labels = [m.value for m in at4.markdown if m.value.startswith("**Orientation window:")]
+    tables = [d.value for d in at4.dataframe[:len(labels)]]           # no window at 60 µm, so the orientation tables come first
+    check("every orientation table names the layer it was measured at and says it is not a recommendation",
+          labels and all(re.search(r"measured at \d+ µm, not at your 60 µm, for orientation only, not a recommendation", x) for x in labels))
+    check("one row per density method in each orientation table", all(t["density method"].is_unique for t in tables))
+    check("a pycnometry row stops below 1200 mm/s, where L08's two methods disagree",
+          all(float(v.split(" to ")[1]) < 1200 for t in tables for m, v in zip(t["density method"], t["v (mm/s)"]) if m == "pycnometry"))
     check("the method-spread pairs next to it show L08 sample 4 at 1200 mm/s, 99.69 against 81.3 %",
-          "81.3" in at4.dataframe[1].value.to_string() and "99.69" in at4.dataframe[1].value.to_string())
-    check("no conflicts among the evidence for this request, so no tree", "No conflicts among the evidence for this request" in text)
+          "81.3" in at4.dataframe[len(labels)].value.to_string() and "99.69" in at4.dataframe[len(labels)].value.to_string())
+    evidence = next(d.value for d in at4.dataframe if {"window", "record", "condition"} <= set(d.value.columns))
+    behind = evidence[evidence["window"].str.contains("orientation")]
+    check("every record behind an orientation window is verified and as printed",
+          len(behind) > 0 and all(s.startswith("verified") for s in behind["status"]) and not behind["condition"].isin(nb.POST_BUILD).any())
+    check("the conflicts part says the Analyst was not needed, or shows its outcome for each conflict",
+          "No conflicts among the evidence for this request" in text or "Outcome:" in text)
     check("the approval question says orientation, not recommendation", "not as a recommendation" in text)
     at4.text_input(key="note").input("test of the app: orientation only, I will run my own trials")
     at4.button(key="reject").click().run()
