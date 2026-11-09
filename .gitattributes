@@ -4,3 +4,5 @@
 *.pdf binary
 # The checked answer key is frozen byte for byte (BOM and CRLF as saved by Excel)
 eval/answer_key.csv -text
+# The independent reference for extension 2 is frozen byte for byte (BOM and CRLF as written)
+eval/prefill/reference_ext2.csv -text

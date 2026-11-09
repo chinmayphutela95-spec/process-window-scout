@@ -21,6 +21,16 @@ from the agent's output.
   machine, and every table with process parameters or density. Other tables and the full Methods text are folded
   away at the bottom of each sheet.
 
+## Extension 2 reference (2026-11-09)
+
+The papers E07 to E13 came in after the answer key was frozen, so they are never part of the accuracy scores.
+For them, a separate Claude agent wrote `prefill/reference_ext2.csv` (60 rows, 7 papers). It used the same rules
+and columns as above and read only the seven paper XML files, this README and the first lines of the pre-fill as a format
+example. It never saw the agent's outputs, the notebook or the git history. Before it was frozen, Claude (in the main
+session) checked every density value in it against the paper tables. The file stays frozen byte for byte (sha256
+2cd5731d...). The notebook compares the agent's records with it in code and reports this as agreement with an independent
+reference, not as accuracy. I check each disagreement myself in the paper.
+
 ## How to fill it
 
 1. **One row per parameter set with its measured density.** A table with nine samples gives nine rows. If one sample
