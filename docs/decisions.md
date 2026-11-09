@@ -523,7 +523,7 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   combinations that I should try if I want to print SS316L with 60 um layers?", machine answer "My machine's power limit
   is 500W and it can do between 60-100 um spot size", rejected with "I asked for 60 um layers, all the results are shown
   for 30 um". The library has no 60 µm records (its layers are 20, 30, 40, 50 and 70 µm), and nothing was invented, but
-  the app failed him four ways. Four fixes (Chinmay's decisions), plus one of mine:
+  the app failed him four ways. Four fixes (Chinmay's decisions), plus a fifth I proposed and he accepted:
   (1) Orientation windows. Adjacent records still never set the recommended window. But when the requested layer has
   none, `recommend_node` gives one window per neighbouring layer and density method from the adjacent records that
   reach the target, labelled "measured at 50 µm, not at your 60 µm, for orientation only, not a recommendation", next to
@@ -542,7 +542,8 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   shown, and a record whose stated spot is outside it is tagged, never left out, because most papers do not report the
   spot. The memory key is short ("500 W machine"), not the sentence.
   (4) A default target says so: "at least 99.5 % (default, you did not give one)".
-  (5) Mine: HIP and heat-treated records never enter a window or an orientation window, though they stay in the evidence
+  (5) My proposal, Chinmay's decision on 2026-11-09: HIP and heat-treated records never enter a window or an orientation
+  window, though they stay in the evidence
   table. A furnace closes pores the print left, so such a density says nothing about the print settings. Without this,
   12 of the 28 records at 50 µm that reach 99.5 % were HIP rows of L08. At 30 µm there is no HIP record, so nothing
   else changes. · What his request shows now (offline replay with a scripted Analyst, 9.4): 500 W machine, max 500 W, spot
@@ -553,6 +554,30 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   exactly where image analysis sees lack-of-fusion pores that pycnometry misses, which L08 itself says. No conflicts
   among the evidence for this request. No record above 500 W. 22 verified records state a spot outside 60 to 100 µm,
   none of them in the orientation windows (L08: 70 µm).
+
+- **2026-11-09** · HIP and heat-treated records never set a window (Chinmay's decision, from fix 5 above). · Their
+  density reflects the furnace, not the print settings.
+- **2026-11-09** · Method disagreement (Chinmay's decision, `disagreeing_records` in 8.5). One sample (same paper, same
+  label, same condition, the definition of 6.5) measured by two methods whose densities differ by more than 1 point sets
+  no window, neither recommended nor orientation. Both records stay in the evidence table with the note "methods disagree
+  by X points on this sample" (written by the Coordinator, the only new field it may write) and both appear in the
+  method-spread table, which uses the same list, so the two never disagree. The conflict search is unchanged, because
+  the Analyst's method explanation is about exactly these cases. · At 1200 mm/s L08's pycnometry reads 98.6 to 99.7 %
+  where image analysis finds 81 to 95 %, because pycnometry misses open lack-of-fusion pores. When methods disagree that
+  much, I cannot tell which density to trust for a window. · Effect: 13 disagreeing samples, all nine L06 samples at
+  30 µm (gaps 1.5 to 6.8 points) and L08 samples 4, 8, 12 and 16 at 50 µm. At 30 µm the image-analysis window loses L06
+  S6 to S9 (S9: 99.53 % against 94.6 % by Archimedes) and shrinks from 6 records (150 to 250 W, 700 to 1100 mm/s, h 60 to
+  120 µm) to E01's 2 (220 to 250 W, 800 mm/s, h 120 µm). The Archimedes window keeps its 4 records (165 to 225 W, 600 to
+  800 mm/s), because no L06 Archimedes value reaches 99.5 %. At 50 µm the pycnometry orientation window loses sample 4
+  and stops at 800 mm/s (7 records, 200 to 350 W, 650 to 800 mm/s). The image-analysis one keeps 8 (400 to 800 mm/s).
+- **2026-11-09** · "a 200 W machine" means at most 200 W (Chinmay's decision, reverses my choice of the same day). The
+  request sets the machine's own limit, a remembered limit applies on top, and the lower one wins. The request line and
+  the log show both: "max 200 W (machine), 190 W (remembered)". 9.3 now stores 190 W at the approval ("I keep it below
+  190 W to spare the optics"). · Effect: run 1 of 9.3 already leaves out 54 verified records above 200 W, run 2 leaves out
+  69 above 190 W. The 30 µm bounds do not move between the two (Archimedes 165 to 175 W, E03 I-67° and E05 S1), because
+  no record between 175 and 200 W reaches 99.5 %. So the memory tightens the limit and the left-out count, not the
+  window. Part 11: Archimedes 165 to 175 W, 600 to 800 mm/s, h 70 to 120 µm (2 records), and no image-analysis window
+  (E01 is above 190 W, L06 is out by the method rule), 69 records above 190 W left out.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |

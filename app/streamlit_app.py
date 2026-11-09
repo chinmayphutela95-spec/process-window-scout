@@ -137,7 +137,9 @@ if not s.thread:
 
 snap, waiting, machine, memory = saved_state()
 values = snap.values
-st.caption(f"Run `{s.thread}`" + (f", read from the request: {nb.describe_request(values['request'])}" if values.get("request") else ""))
+remembered = ((values.get("recommendation") or {}).get("limit_sources") or {}).get("remembered")
+st.caption(f"Run `{s.thread}`" + (f", read from the request: {nb.describe_request(values['request'], remembered)}"
+                                  if values.get("request") else ""))
 stalled = bool(snap.next) and waiting is None                 # stopped between two steps, not paused for me
 if s.error or stalled:
     st.warning(s.error or "This run stopped before it finished, for example without the model endpoint.")
@@ -180,8 +182,9 @@ if records:
         st.info("No window yet: the run has not reached the window step.")
     else:
         st.write(f"Status: **{rec['status']}**" + (f", headline bounds from **{rec['method']}** records" if rec.get("method") else "")
-                 + (f". Machine limit: {rec['limits']} (from your {' and '.join(rec.get('limits_from') or ['memory'])}), "
-                    f"{len(rec.get('blocked_by_limits', []))} records above it left out" if rec.get("limits") else "") + ".")
+                 + (f". Power limit {nb.limits_text(rec['limit_sources']['machine'], rec['limit_sources']['remembered'])}, the "
+                    f"lower one applies: {len(rec.get('blocked_by_limits', []))} records above {rec['limits']['max_power_W']:g} W left out"
+                    if (rec.get("limits") or {}).get("max_power_W") else "") + ".")
         if rec.get("spot_range"):
             st.caption("Your spot range: {:g} to {:g} µm. ".format(*rec["spot_range"]) + f"{len(rec.get('spot_outside', []))} verified "
                        "records state a spot outside it. They are tagged in the evidence table, not left out, because most papers do "
@@ -195,16 +198,16 @@ if records:
                 here = [w for w in rec["orientation"] if w["layer_um"] == layer]
                 st.markdown(f"**Orientation window: {here[0]['label']}**")
                 window_table(here)
-            if rec.get("method_spread"):
-                st.markdown("**Same sample, two density methods, more than 1 point apart.** Check these before trusting a window "
-                            "from one method.")
-                st.dataframe(pd.DataFrame([{"paper": p["paper"], "sample": p["sample"], "layer (µm)": p["layer_um"],
-                                            "P (W)": p["power_W"], "v (mm/s)": p["speed_mm_s"],
-                                            "method A": p["method_a"], "density A (%)": p["density_a"],
-                                            "method B": p["method_b"], "density B (%)": p["density_b"], "gap": p["gap"]}
-                                           for p in rec["method_spread"]]), hide_index=True)
         elif not rec["windows"]:
             st.warning(f"No window at {req['layer_um']:g} µm, and no neighbouring layer reaches the target either.")
+        if rec.get("method_spread"):
+            st.markdown("**Same sample, two density methods, more than 1 point apart.** Neither record sets a window, because I "
+                        "cannot tell which density to trust.")
+            st.dataframe(pd.DataFrame([{"paper": p["paper"], "sample": p["sample"], "layer (µm)": p["layer_um"],
+                                        "P (W)": p["power_W"], "v (mm/s)": p["speed_mm_s"],
+                                        "method A": p["method_a"], "density A (%)": p["density_a"],
+                                        "method B": p["method_b"], "density B (%)": p["density_b"], "gap": p["gap"]}
+                                       for p in rec["method_spread"]]), hide_index=True)
     widened = values.get("widened") or {}
     if widened.get("adjacent"):
         st.caption(f"One wider search at {', '.join(f'{t:g}' for t in widened['layers'])} µm: {len(widened['adjacent'])} records "
@@ -215,7 +218,8 @@ if records:
             **{i: "above machine limit" for i in (rec or {}).get("blocked_by_limits", [])}}
     outside = set((rec or {}).get("spot_outside", []))
     rows = [{"status": r["status"] + (", adjacent" if r.get("scope") == "adjacent" else ""),
-             "window": ", ".join(x for x in (role.get(r["id"], ""), "spot outside your range" if r["id"] in outside else "") if x),
+             "window": ", ".join(x for x in (role.get(r["id"], ""), r.get("window_note") or "",
+                                             "spot outside your range" if r["id"] in outside else "") if x),
              "paper": nb.SHORT.get(r["paper_id"], r["paper_id"]), "sample": r.get("sample_label"),
              "P (W)": r.get("power_W"), "v (mm/s)": r.get("speed_mm_s"), "h (µm)": r.get("hatch_um"), "t (µm)": r.get("layer_um"),
              "spot (µm)": r.get("spot_um"), "density (%)": r.get("density_pct"), "method": nb.method_key(r) or "not stated",

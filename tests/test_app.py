@@ -129,6 +129,8 @@ try:
     stopped = any("needs the model endpoint" in w.value for w in at.warning)
     check("the run reached the approval pause, or said plainly that it needs the endpoint", reached or stopped)
     print(f"     {'reached the approval pause' if reached else 'stopped at the Analyst: an answer is not in the cache'}")
+    if reached:
+        check("the request line shows the machine's 200 W and the remembered 190 W", "max 200 W (machine), 190 W (remembered)" in page_text(at))
     check("the clarity gate set L04 and E04 aside, shown on the page",
           {"L04", "E04"} <= {e.label.split()[0] for e in at.expander if "density not clearly reported" in e.label})
     check("the page shows neither the endpoint address nor the key", nb.redact(page_text(at)) == page_text(at))
@@ -143,18 +145,18 @@ try:
     check("Reject without a comment is refused and the run keeps waiting",
           any("say why" in w.value for w in at.warning) and any(b.key == "approve" for b in at.button))
     at.text_input(key="note").input("test of the app: start in the middle of the window")
-    at.number_input(key="limit").set_value(190)
+    at.number_input(key="limit").set_value(180)
     at.button(key="approve").click().run()
     check("no error after approving", not at.exception)
     check("the page shows the saved decision", any(e.value.startswith("Approved: test of the app") for e in at.success))
-    check("and what was written to the memory store", any("Written by this decision" in m.value and "190" in m.value for m in at.markdown))
+    check("and what was written to the memory store", any("Written by this decision" in m.value and "180" in m.value for m in at.markdown))
     runs = sqlite3.connect(RUNS_DB, check_same_thread=False)
     saved = SqliteSaver(runs).get_tuple({"configurable": {"thread_id": threads[0]}}).checkpoint["channel_values"]
     runs.close()
     check("the decision is in the run's last SQLite checkpoint (read with a new connection)",
           saved["approval"] == {"approved": True, "note": "test of the app: start in the middle of the window",
-                                "limits": {"max_power_W": 190}})
-    check("the limit is in the memory store under the machine's name", read_memory() == [(MACHINE, "engineer", {"max_power_W": 190})])
+                                "limits": {"max_power_W": 180}})
+    check("the limit is in the memory store under the machine's name", read_memory() == [(MACHINE, "engineer", {"max_power_W": 180})])
 
     print("4. A layer the library does not have (my own request of 9 November)")
     at4 = AppTest.from_file(str(APP), default_timeout=900)
@@ -173,7 +175,9 @@ try:
     check("it says plainly that there is no window at 60 µm", any("No window at 60 µm" in w.value for w in at4.warning))
     check("the orientation window is labelled as measured at 50 µm, for orientation only",
           "measured at 50 µm, not at your 60 µm, for orientation only, not a recommendation" in text)
-    check("one orientation row per density method", sorted(at4.dataframe[0].value["density method"]) == ["image analysis", "pycnometry"])
+    check("one orientation row per density method, and the pycnometry one stops below 1200 mm/s",
+          sorted(at4.dataframe[0].value["density method"]) == ["image analysis", "pycnometry"]
+          and "1200" not in at4.dataframe[0].value.set_index("density method").loc["pycnometry", "v (mm/s)"])
     check("the method-spread pairs next to it show L08 sample 4 at 1200 mm/s, 99.69 against 81.3 %",
           "81.3" in at4.dataframe[1].value.to_string() and "99.69" in at4.dataframe[1].value.to_string())
     check("no conflicts among the evidence for this request, so no tree", "No conflicts among the evidence for this request" in text)
