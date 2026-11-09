@@ -619,7 +619,9 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   Table 3's two image-analysis values (`density_tables()` misses "Pores Area (%)", a second gap next to "RD (%)").
   Before the rule the graph also had E07 Table 9's four restated porosities, which contradict Table 5. E07 Table 4 samples
   3.8, 5.5, 5.8 and 7.8 repeat Table 5 and Table 7 values. All four repeats are incomplete, so none counts twice in a
-  window. A verified repeat would count twice in a window's record count but never move its bounds.
+  window. A verified repeat would count twice in a window's record count but never move its bounds. After the online
+  retry of E12 (9 November): condition 56 of 56. HT1 and HT2 come out heat treated and incomplete, because E12 states
+  no hatch, so they are in no window.
 - **2026-11-09** · A Reader retry that gets no answer counts as a failed retry (`GLMReader`, 8.11). Offline, a retry
   whose answer was not in the cache stopped the whole real run, as if no paper had been read. Now its records stay
   "not verified" and out of every window, the summary in 8.11 says the retry is pending, and the next run with the
