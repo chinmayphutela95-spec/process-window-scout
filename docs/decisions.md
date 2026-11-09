@@ -595,6 +595,32 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   papers and so their cached Reader answers. PMC7178480 also states only the machine's layer range, so it could not have
   set a window anyway.
 
+- **2026-11-09** · Statistical-test tables are not reading units (Chinmay's decision, `STATISTICS_TABLE` in 5.1): a table
+  whose caption names ANOVA, analysis of variance or residual(s), as whole words, is not read. · Such a table only
+  restates values that the results table gives first-hand, and E07 Table 9 shows that the restated copy can be wrong
+  (run 1 is 7.75 % there against 0.27 % in Table 5, and 7.75 looks like Table 5's run 3). "Regression" and "predicted"
+  stay out of the rule, because L10 Table 5 ("Predicted versus actual") is a validation table whose "Actual Porosity"
+  column is the first place those measurements are printed (6 key rows, 6 verified records). The rule removes E07 Table 9
+  and L06 Table 3. L06 Table 3 returned 0 records in every trace and holds no key row, the v2 records are identical
+  before and after (134 records, field by field), so 10.5 does not change.
+- **2026-11-09** · Check 17, the condition fits the sample (Chinmay's decision, 6.4): a record marked as-built is flagged
+  if its label names a treatment (HT with or without a digit, HIP, heat, anneal, aged, stress relief, solution) or its
+  notes say heat-treated, annealed or HIP without a negation in front (non-, not, un-, without, no, before, prior to). A
+  flag goes the normal way, one retry with the reason, then "not verified". · E12's HT1 and HT2 came out as-built,
+  though the Reader's own note says heat treated, and the HIP and heat-treatment rule of 8.5 is only as good as this
+  field. On the first attempts it flags exactly E12 HT1 and HT2, not E12 REF ("non-heat-treated"), and 0 of the 94
+  as-built v2 and 12 as-built extension 1 records. Found by the extension 2 comparison, so not a blind check.
+- **2026-11-09** · Agreement of extension 2 with the independent reference (10.6, never accuracy, never in the v2
+  scores). After the statistics-table rule: 60 reference rows, 60 graph records, 56 rows matched. Density, method, layer,
+  hatch and spot agree on every matched row. Power and speed 51 of 56: E07 Table 4 samples 3.2, 3.5, 5.2, 7.2 and 7.5
+  have none, because the Reader does not apply the paper's label-to-run mapping (incomplete, so never in a window: the
+  safe failure). Condition 54 of 56: E12 HT1 and HT2 as-built against heat treated (Table 3: 650 and 1050 °C), now caught
+  by check 17. Found by the reference only: E09's two CT values from its text (not read when a paper has a table) and E13
+  Table 3's two image-analysis values (`density_tables()` misses "Pores Area (%)", a second gap next to "RD (%)").
+  Before the rule the graph also had E07 Table 9's four restated porosities, which contradict Table 5. E07 Table 4 samples
+  3.8, 5.5, 5.8 and 7.8 repeat Table 5 and Table 7 values. All four repeats are incomplete, so none counts twice in a
+  window. A verified repeat would count twice in a window's record count but never move its bounds.
+
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
 |---|---|---|---|---|
