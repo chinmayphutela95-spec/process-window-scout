@@ -30,3 +30,6 @@ logs/
 Thumbs.db
 desktop.ini
 ~$*
+
+# Word documents stay out of the repo (submitted checkpoints are kept as markdown text)
+*.docx
