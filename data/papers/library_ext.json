@@ -1,0 +1,98 @@
+[
+ {
+  "pmcid": "PMC9317792",
+  "doi": "10.3390/ma15144938",
+  "title": "A Comparative Study on Laser Powder Bed Fusion of Differently Atomized 316L Stainless Steel.",
+  "year": "2022",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, gas and ultrasonic atomized powders at the same settings, porosity table",
+  "role": "extension",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC8779437",
+  "doi": "10.3390/ma15020551",
+  "title": "Mechanical and Microstructural Anisotropy of Laser Powder Bed Fusion 316L Stainless Steel.",
+  "year": "2022",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, 200 W, 800 mm/s, porosity at three heights of one build",
+  "role": "extension",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC10934583",
+  "doi": "10.3390/ma17051189",
+  "title": "Effect of Scanning Strategy on the Manufacturing Quality and Performance of Printed 316L Stainless Steel Using SLM Process.",
+  "year": "2024",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, 165 W, 70 µm hatch, 800 mm/s, six scan strategies, Archimedes density in the text",
+  "role": "extension",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC9573657",
+  "doi": "10.3390/ma15196672",
+  "title": "Effects of the Energy Density on Pores, Hardness, Surface Roughness, and Tensile Characteristics of Deposited ASTM 316L Specimens with Powder-Bed Fusion Process.",
+  "year": "2022",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, nine settings by energy density, sectional porosity from micrographs",
+  "role": "extension",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC12387858",
+  "doi": "10.3390/ma18163899",
+  "title": "Microstructural and Mechanical Property Variations in 316L Stainless Steel Fabricated by Laser Powder Bed Fusion Under High-Density Processing Conditions.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, 150 to 225 W, 600 to 1000 mm/s, 80 to 120 µm hatch, Archimedes",
+  "role": "extension",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC10935024",
+  "doi": "10.3390/ma17051129",
+  "title": "Strength Enhancement of Laser Powder Bed Fusion 316L by Addition of Nano TiC Particles.",
+  "year": "2024",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, plain 316L next to 316L with nano TiC: only the plain 316L row is evidence",
+  "role": "extension",
+  "paper_kind": "primary"
+ }
+]

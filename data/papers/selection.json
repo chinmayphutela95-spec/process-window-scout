@@ -1,0 +1,56 @@
+[
+ {
+  "pmcid": "PMC13073740",
+  "doi": "10.3390/ma19071297",
+  "title": "A Lattice Boltzmann Thermal Model for Predicting Melt Pool Geometry in Selective Laser Melting of AlSi10Mg and 316L Stainless Steel.",
+  "year": "2026",
+  "journal": "Materials (Basel)",
+  "alloy": "316L",
+  "role": "source"
+ },
+ {
+  "pmcid": "PMC12735063",
+  "doi": "10.3390/ma18245490",
+  "title": "Role of Laser Powder Bed Fusion Process Factors in Determining the Porosity Formation in 3D Printing of Stainless Steel 316L: Theoretical Modeling and Experimental Verification.",
+  "year": "2025",
+  "journal": "Materials (Basel)",
+  "alloy": "316L",
+  "role": "source"
+ },
+ {
+  "pmcid": "PMC13208960",
+  "doi": "10.3390/mi17050547",
+  "title": "Novel Design in Venturi-Type Nozzle by Selective Laser Melting for Enhancement in Microbubble Generation.",
+  "year": "2026",
+  "journal": "Micromachines (Basel)",
+  "alloy": "316L",
+  "role": "source"
+ },
+ {
+  "pmcid": "PMC12387571",
+  "doi": "10.3390/jfb16080280",
+  "title": "Manufacturing, Microstructure, and Mechanics of 316L SS Biomaterials by Laser Powder Bed Fusion.",
+  "year": "2025",
+  "journal": "J Funct Biomater",
+  "alloy": "316L",
+  "role": "source"
+ },
+ {
+  "pmcid": "PMC12194911",
+  "doi": "10.3390/ma18122870",
+  "title": "A Review of Optimization of Additively Manufactured 316/316L Stainless Steel Process Parameters, Post-Processing Strategies, and Defect Mitigation.",
+  "year": "2025",
+  "journal": "Materials (Basel)",
+  "alloy": "316L",
+  "role": "source"
+ },
+ {
+  "pmcid": "PMC12693020",
+  "doi": "10.3390/ma18235390",
+  "title": "Laser Powder Bed Fusion of 25CrMo4 Steel: Effect of Process Parameters on Metallurgical and Mechanical Properties.",
+  "year": "2025",
+  "journal": "Materials (Basel)",
+  "alloy": "25CrMo4",
+  "role": "distractor"
+ }
+]

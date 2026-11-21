@@ -19,6 +19,24 @@ data/*
 # The model-answer cache is committed so the notebook can replay every model call without an endpoint.
 # It holds prompts and answers only (no endpoint address or key, checked 2026-11-21).
 !data/llm_cache.sqlite
+# Small evidence files a fresh run cannot make (metadata and extracted values, no paper text, no address or key):
+# the frozen paper selections, the submitted Checkpoint 3.1 demo, its citation check, and the earlier runs that
+# 8.12 and 8.13 compare against.
+!data/crossref_check.json
+!data/papers/
+data/papers/*
+!data/papers/selection.json
+!data/papers/library_v2.json
+!data/papers/library_ext.json
+!data/papers/library_ext2.json
+!data/traces/
+data/traces/*
+!data/traces/checkpoint3_demo.json
+!data/extraction/
+data/extraction/*
+!data/extraction/reader_records_before_fixes.csv
+!data/extraction/checked_records_before_fixes.csv
+!data/extraction/graph_run_records_sessionD.csv
 *.sqlite
 *.db
 chroma/

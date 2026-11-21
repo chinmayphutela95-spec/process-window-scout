@@ -1,0 +1,114 @@
+[
+ {
+  "pmcid": "PMC8877025",
+  "doi": "10.3390/ma15041605",
+  "title": "Corrosion and Microstructural Investigation on Additively Manufactured 316L Stainless Steel: Experimental and Statistical Approach.",
+  "year": "2022",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "25 µm, nine Taguchi runs of power and speed, porosity by image analysis (Table 5)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC7215600",
+  "doi": "10.3390/ma13081901",
+  "title": "Additive Manufacturing and Mechanical Performance of Trifurcated Steel Joints for Architecturally Exposed Steel Structures.",
+  "year": "2020",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, orthogonal test of power, speed and hatch, Archimedes (Table 2)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC9799015",
+  "doi": "10.1002/advs.202201162",
+  "title": "Quantitative 3D Characterization for Kinetics of Corrosion Initiation and Propagation in Additively Manufactured Austenitic Stainless Steel.",
+  "year": "2022",
+  "journal": "Advanced science (Weinheim, Baden-Wurttemberg, Germany)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, two settings, Archimedes (Table 1)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC10582079",
+  "doi": "10.1038/s41467-023-42319-x",
+  "title": "Material-agnostic machine learning approach enables high relative density in powder bed fusion products.",
+  "year": "2023",
+  "journal": "Nature communications",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "50 µm, settings proposed by a model and then printed, image analysis (Table 3, Tables 4 and 5 are other alloys)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC11766599",
+  "doi": "10.3390/ma18020435",
+  "title": "Influence of Process Parameter and Build Rate Variations on Defect Formation in Laser Powder Bed Fusion SS316L.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "50 µm, power and speed at one energy density, X-ray CT volume density (Table 1)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC7177779",
+  "doi": "10.3390/ma13071527",
+  "title": "Complex Corrosion Properties of AISI 316L Steel Prepared by 3D Printing Technology for Possible Implant Applications.",
+  "year": "2020",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "50 µm, one setting as-built and heat treated, porosity method not stated (Table 4)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC10383166",
+  "doi": "10.3390/ma16145200",
+  "title": "A Comparative Investigation of Properties of Metallic Parts Additively Manufactured through MEX and PBF-LB/M Technologies.",
+  "year": "2023",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, one setting stated in Methods, Archimedes (Table 2, SLM row only, the others are wrought and extrusion)",
+  "role": "extension 2",
+  "paper_kind": "primary"
+ }
+]

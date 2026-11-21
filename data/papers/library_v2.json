@@ -1,0 +1,179 @@
+[
+ {
+  "pmcid": "PMC13073740",
+  "doi": "10.3390/ma19071297",
+  "title": "A Lattice Boltzmann Thermal Model for Predicting Melt Pool Geometry in Selective Laser Melting of AlSi10Mg and 316L Stainless Steel.",
+  "year": "2026",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "v1. Melt-pool simulation: parameters quoted from other work, NO measured density (right answer: not reported)",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC12735063",
+  "doi": "10.3390/ma18245490",
+  "title": "Role of Laser Powder Bed Fusion Process Factors in Determining the Porosity Formation in 3D Printing of Stainless Steel 316L: Theoretical Modeling and Experimental Verification.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "v1. Porosity formation at 30, 50 and 70 µm layers, scan speed given in m/s",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC13208960",
+  "doi": "10.3390/mi17050547",
+  "title": "Novel Design in Venturi-Type Nozzle by Selective Laser Melting for Enhancement in Microbubble Generation.",
+  "year": "2026",
+  "journal": "Micromachines",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "v1. Venturi nozzle, 30 µm, 120 µm hatch: the 97.76 % result of Checkpoint 3.1",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC12387571",
+  "doi": "10.3390/jfb16080280",
+  "title": "Manufacturing, Microstructure, and Mechanics of 316L SS Biomaterials by Laser Powder Bed Fusion.",
+  "year": "2025",
+  "journal": "Journal of functional biomaterials",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "v1. 30 µm, 90 µm hatch, density only in text and figures: the 99.97 % result of Checkpoint 3.1",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC12194911",
+  "doi": "10.3390/ma18122870",
+  "title": "A Review of Optimization of Additively Manufactured 316/316L Stainless Steel Process Parameters, Post-Processing Strategies, and Defect Mitigation.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "review-article",
+   "Review",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "v1. REVIEW: its tables quote other studies (quoted, not primary data)",
+  "role": "source",
+  "paper_kind": "review"
+ },
+ {
+  "pmcid": "PMC11818529",
+  "doi": "10.3390/ma18030568",
+  "title": "Effect of Porosity on Tribological Properties of Medical-Grade 316L Stainless Steel Manufactured by Laser-Based Powder Bed Fusion.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, Concept Laser: porosity by Archimedes AND image analysis on the same samples",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC8510493",
+  "doi": "10.3390/ma14195809",
+  "title": "Tensile Properties and Deformation of AISI 316L Additively Manufactured with Various Energy Densities.",
+  "year": "2021",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "30 µm, three energy densities, Archimedes density: close to the PMC12387571 settings",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC7579382",
+  "doi": "10.3390/ma13194377",
+  "title": "Effect of Hot Isostatic Pressing on Porosity and Mechanical Properties of 316 L Stainless Steel Prepared by the Selective Laser Melting Method.",
+  "year": "2020",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "50 µm, pycnometry vs image analysis, as-built AND after HIP",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC8880558",
+  "doi": "10.3390/ma15041353",
+  "title": "Effect of Laser Speed and Hatch Spacing on the Corrosion Behavior of 316L Stainless Steel Produced by Selective Laser Melting.",
+  "year": "2022",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "40 µm, fixed 370 W, speed and hatch varied, optical porosity",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC9919176",
+  "doi": "10.3390/ma16031050",
+  "title": "Process Parameter Selection for Production of Stainless Steel 316L Using Efficient Multi-Objective Bayesian Optimization Algorithm.",
+  "year": "2023",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "316L",
+  "why": "20 µm, Trumpf TruPrint 1000, porosity table with very small values (check the units)",
+  "role": "source",
+  "paper_kind": "primary"
+ },
+ {
+  "pmcid": "PMC12693020",
+  "doi": "10.3390/ma18235390",
+  "title": "Laser Powder Bed Fusion of 25CrMo4 Steel: Effect of Process Parameters on Metallurgical and Mechanical Properties.",
+  "year": "2025",
+  "journal": "Materials (Basel, Switzerland)",
+  "license": "cc by",
+  "pub_types": [
+   "research-article",
+   "Journal Article"
+  ],
+  "alloy": "25CrMo4",
+  "why": "DISTRACTOR: 25CrMo4 steel, same kind of study, wrong alloy",
+  "role": "distractor",
+  "paper_kind": "primary"
+ }
+]
