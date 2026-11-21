@@ -151,10 +151,16 @@ python -m venv .venv
 
 - **Model endpoint (optional):** copy `.env.example` to `.env` and fill in any OpenAI-compatible endpoint serving
   GLM-5.2. Without it, every model call the notebook makes is replayed from `data/llm_cache.sqlite`.
-- **Notebook:** open `notebooks/process_window_scout.ipynb` with the `.venv` kernel and run all cells. The first run
-  downloads the 23 papers from Europe PMC and the embedding model from Hugging Face.
-- **App:** `.venv/Scripts/python -m streamlit run app/streamlit_app.py`
-- **App test:** `.venv/Scripts/python tests/test_app.py`
+- **Notebook:** open `notebooks/process_window_scout.ipynb`, choose the Python of `.venv` as the kernel, and run all
+  cells. The first run downloads 24 open-access papers from Europe PMC (the 23 on 316L and one paper on another steel
+  that tests the alloy filter) and the embedding model (about 1.2 GB) from Hugging Face. It took about 17 minutes on
+  my laptop, and later runs take about 3 minutes. A Hugging Face warning about unauthenticated requests is harmless.
+- **App:** `.venv/Scripts/python -m streamlit run app/streamlit_app.py`, after the notebook has run once (the app
+  needs the downloaded papers and the vector database).
+- **App test:** `.venv/Scripts/python tests/test_app.py`, also after one notebook run.
+
+I tested these steps on a fresh clone with no `.env`, no saved data and no downloaded model. The notebook finished
+with no errors, and all 650 model calls were replayed from the cache.
 
 ## Licence and data
 
