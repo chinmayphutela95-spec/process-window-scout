@@ -16,6 +16,9 @@ venv/
 # Data: downloaded papers, parsed text, vector and evidence databases
 data/*
 !data/README.md
+# The model-answer cache is committed so the notebook can replay every model call without an endpoint.
+# It holds prompts and answers only (no endpoint address or key, checked 2026-11-21).
+!data/llm_cache.sqlite
 *.sqlite
 *.db
 chroma/

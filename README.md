@@ -1,60 +1,162 @@
 # Process Window Scout (AM-PWS)
 
-An autonomous research agent that recommends **process windows for metal 3D printing (PBF-LB)** from the
-open-access literature, and tells you which published results to trust.
+A multi-agent research assistant that proposes **laser process windows for metal 3D printing (PBF-LB)** from the
+open-access literature, shows the evidence behind every number, and leaves the decision to the engineer.
 
-Given a request such as *"316L stainless steel, 200 W machine, 30 µm layers, target density above 99.5%"*,
-the agent:
+**Video:** *(link added at submission)* · **Final report:** *(PDF, added at submission)* ·
+**Checkpoints:** [`checkpoints/`](checkpoints/)
 
-1. finds and reads relevant open-access papers (OpenAlex API);
-2. extracts laser power, scan speed, hatch spacing, layer thickness and density, each with its citation;
-3. checks every result for plausibility using three signals:
-   - **source check**: is the value really in the cited passage?
-   - **consensus**: what do other papers report at similar settings?
-   - **physics band**: an analytical melt-pool model run across a range of laser absorptivities
-     (weak evidence, never ground truth);
-4. flags a result as an outlier only when consensus *and* the whole physics band disagree, explores
-   likely explanations, and recommends a process window for the engineer to approve.
+Capstone project for the Carnegie Mellon University School of Computer Science Executive Education course on agentic
+AI systems (2026). Project type: Research Assistant.
 
-Capstone project for the Carnegie Mellon University School of Computer Science Executive Education
-course on agentic AI systems (2026). Project type: Research Assistant.
+## The problem and the user
 
-## Status
-In development. The notebook runs end to end: tools, retrieval over 23 open-access 316L papers (10 scored, 13 for the window only), a Reader, a code Checker and a Tree of Thought Analyst in one LangGraph graph, guardrails with human approval, an evaluation Part scored on the hand-checked answer key, and a small browser UI. See [`docs/decisions.md`](docs/decisions.md) for design decisions and the
-model-choice log, and [`checkpoints/`](checkpoints/) for each course checkpoint.
+Before a new alloy or machine goes into production, a process engineer needs a starting window: laser power, scan
+speed, hatch spacing and layer thickness that give dense parts. The data is spread over many papers, in tables with
+different units, measured with different density methods, and it often disagrees. A chatbot answers with plausible
+numbers and no source. Process Window Scout answers with numbers that each trace back to a passage in a paper,
+checked by code, and it says plainly when the evidence is thin or when no paper covers the request.
 
-| Checkpoint | Topic | Status |
+## What happens for one request
+
+*"316L, 30 µm layers, relative density above 99.5 %"*
+
+1. **Clarify (code).** If the alloy grade, layer thickness or machine power is missing, the agent asks before it
+   searches.
+2. **Read (GLM-5.2, in parallel).** One Reader per table or text section of 23 CC BY papers on 316L extracts power,
+   speed, hatch, layer, spot, density, density method and sample condition, each with the passage it came from.
+3. **Check (code).** 17 checks per record: the value is in its cited passage, in the right row and column, one sample
+   keeps one parameter set across tables, the condition matches the sample label, units and energy density are
+   plausible. A failed record goes back to its Reader once, with the reason, then stays "not verified".
+4. **Gate and widen (code).** Papers with approximate densities are set aside. With fewer than 10 records at the
+   requested layer, one search at the neighbouring layers adds records marked "adjacent", which never set bounds.
+5. **Explain conflicts (GLM-5.2, Tree of Thought).** Only when code finds comparable records from different papers
+   that disagree. A generator proposes causes, a critic checks them against quotes from both papers, and code scores
+   them into an outcome (Resolved, Competing, Unresolved) with an evidence tier.
+6. **Recommend (code).** One window per density method, from verified as-built records only, within the machine's
+   power limit. Each window carries an evidence line: papers, records, samples below the target inside the window,
+   and for each edge whether a failed sample lies beyond it (measured) or the data simply ends (open). A window with
+   fewer than three records or from a single paper is flagged "thin evidence, needs review".
+7. **Answer (GLM-5.2, checked by code).** A short written answer. Code checks that every number and paper in it
+   comes from the results, otherwise one retry, then a template written by code.
+8. **Approve (engineer).** The graph pauses. The engineer approves, or rejects with a reason. Power limits given
+   here are remembered for that machine and applied to the next run.
+
+## Architecture
+
+![Architecture](docs/architecture.png)
+
+One LangGraph state graph. Grey nodes are plain code, blue nodes call the model, orange nodes are the engineer. The
+state (the evidence table and every decision) is saved after each step in a SQLite checkpointer, so a paused run can be
+resumed later. Machine limits live in a LangGraph store. Every model call is traced with its prompt, reasoning, tokens
+and time, and cached so that runs can be replayed. Design decisions and the model-choice log are in
+[`docs/decisions.md`](docs/decisions.md).
+
+| Component | Built with |
+|---|---|
+| Model | GLM-5.2 (open weights) on an OpenAI-compatible endpoint, thinking on, reasoning shown at every step |
+| Agent graph | LangGraph `StateGraph`, `Send` for parallel Readers and Tree of Thought branches, `interrupt` and `Command(resume=...)` for the engineer, SQLite checkpointer and store |
+| Model calls | LangChain `ChatOpenAI` subclass that keeps GLM's reasoning, structured output with Pydantic, SQLite cache, trace callback |
+| Retrieval | Qwen3-Embedding-0.6B, ChromaDB with an alloy filter, MMR |
+| Tools | `energy_density`, `melt_pool_band`, `consensus_lookup`, `search_passages` as LangChain tools, also served over MCP with fastmcp |
+| Papers | Europe PMC search and full-text XML, CC BY licences only |
+| Front end | Streamlit, running the notebook's cells tagged `core` |
+
+## Evaluation
+
+I checked extraction against an answer key of 93 values from 10 papers. Another model (Claude) pre-filled the key
+from the papers only, and I checked every row against the paper (see [`eval/README.md`](eval/README.md)). Seven newer
+papers were compared with an independent reference written the same way. Notebook 10.9 states the thresholds a
+deployment would have to meet:
+
+| Metric | Threshold | Measured |
 |---|---|---|
-| 1.1 | Scoping and initial agent design | Submitted |
-| 2.1 | Agent design refinement | Submitted |
-| 3.1 | RAG and retrieval design | Submitted |
-| 4.1 | Tree of Thought integration | Submitted |
-| 5.1 | Multi-agent architecture | Submitted |
-| 6.1 | Safety guardrails and human intervention | Planned |
-| 7.1 | Final report and presentation | Planned |
+| Extraction precision | at least 0.95 | 0.976 |
+| Recall of the answer key | at least 0.85 | 0.871 |
+| Planted wrong records caught | 100 % | 5 of 5 |
+| False alarms of the source check | at most 2 % | 0 of 134 |
+| Window and answer numbers traced to a verified passage | 100 % | 115 of 115 |
+| Density agreement with the independent reference (7 new papers) | at least 95 % | 56 of 56 matched rows |
 
-## Repository layout
-```
-notebooks/     process_window_scout.ipynb: the whole agent, built and tested Part by Part
-app/           small Streamlit page over the notebook's graph (runs the notebook cells tagged "core")
-tests/         app smoke test (Streamlit AppTest)
-docs/          architecture, decisions, model-choice log
-checkpoints/   course checkpoint write-ups and diagrams
-data/          downloaded papers and generated databases (not committed)
-```
+Other comparisons in notebook Part 10:
+- **Multi-agent against a single tool-using agent at 30 µm:** 32 of 36 densities right against 17.
+- **Tree of Thought against a single thinking call:** they name the same cause in all 5 conflicts.
+- **Known answers:** in both cases where the paper itself states the cause, the tree names it.
+- **Test with contradictory but valid papers:** both records are kept, and the pair goes to the Analyst instead of one
+  being called wrong.
+- **Escalation on the 5 demo requests:** these were left incomplete on purpose. 4 asked back before searching, 1
+  ended with an orientation-only answer, and 3 had thin evidence on the main window. There is no threshold for this
+  yet. It would be watched in a supervised pilot.
 
-## Design principles
-- **Open-weight model** (GLM-5.2) served through an OpenAI-compatible endpoint, with thinking mode on and the
-  model's reasoning shown at every step. Endpoint settings come from `.env` and are never committed.
-- **The LLM never does arithmetic.** All numbers come from cited papers or deterministic Python tools.
-- **Public data only:** open-access papers with reuse-permitting licenses.
-- **Human in the loop:** no recommendation is final until the user approves it.
+## Safety and human oversight
 
-## Setup
-*(to be completed as the code is built)*
+- **Code decides what enters a window.** The model reads and writes, and arithmetic is never left to it.
+- **No action on a machine.** No tool can write anything or act on equipment. Every window needs the engineer's
+  approval, and a rejection needs a reason.
+- **The agent defers to the engineer** when the request is ambiguous, when no verified record at the requested layer
+  reaches the target (it then shows the neighbouring layers "for orientation only, not a recommendation"), and when a
+  window has thin evidence. It also defers when two density methods disagree on one sample, and when a conflict stays
+  Competing or Unresolved.
+- **Everything is traceable and replayable.** Every value links to its passage, and every model call is traced.
+
+## Limitations
+
+- **A frozen library.** The 23 papers were found with the agent's search tools and screened in code, then frozen. The
+  graph reads this library and does not search the web for each request.
+- **Thin coverage.** The library covers 20 to 50 µm layers, with most data at 30 and 50 µm. Some windows are boxes
+  around different papers and contain samples that missed the target. The evidence line shows this.
+- **Gaps in what is extracted.** Machine, laser and scan strategy are not extracted, so diversity is counted in papers
+  and density methods only. Comparing setups before the Analyst is future work.
+- **The physics band is weak evidence.** The melt-pool model only adds facts to the Analyst's tree. The outlier rule
+  that combines it with consensus is shown in notebook 6.6 but not used in the graph.
+- **A hosted model.** GLM-5.2 runs on a hosted endpoint. The committed cache replays known questions only.
+
+## How to review this repository
+
+- **Notebook:** [`notebooks/process_window_scout.ipynb`](notebooks/process_window_scout.ipynb) holds the whole system,
+  built and tested Part by Part, with all outputs saved:
+
+  | Part | What it covers |
+  |---|---|
+  | 0 | Settings, cache and traces |
+  | 1 | Tools that keep arithmetic out of the model |
+  | 2 | The model |
+  | 3 | Retrieval and the paper library |
+  | 4 | Single-agent baseline |
+  | 5 | Reader |
+  | 6 | Checker |
+  | 7 | Tree of Thought Analyst |
+  | 8 | The multi-agent graph and the evidence per window |
+  | 9 | Guardrails, memory and the Writer |
+  | 10 | Evaluation and readiness |
+  | 11 | End-to-end demo |
+  | 12 | The app |
+
+- **Samples:** [`samples/`](samples/) holds every extracted record with its check status, and the trace of the
+  end-to-end demo.
+- **Evaluation:** [`eval/`](eval/) holds the answer key and the independent reference.
+- **Design records:** [`docs/`](docs/) holds the design decisions, the capability ledger (each checkpoint promise and
+  its evidence) and the notebook outline.
+
+## How to run it
+
+Tested on Windows 11 with Python 3.13.
+
 ```bash
+git clone https://github.com/chinmayphutela95-spec/process-window-scout.git
+cd process-window-scout
 python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
 
-Browser UI: run the notebook once (it fills `data/`), then `python -m streamlit run app/streamlit_app.py` from this folder.
+- **Model endpoint (optional):** copy `.env.example` to `.env` and fill in any OpenAI-compatible endpoint serving
+  GLM-5.2. Without it, every model call the notebook makes is replayed from `data/llm_cache.sqlite`.
+- **Notebook:** open `notebooks/process_window_scout.ipynb` with the `.venv` kernel and run all cells. The first run
+  downloads the 23 papers from Europe PMC and the embedding model from Hugging Face.
+- **App:** `.venv/Scripts/python -m streamlit run app/streamlit_app.py`
+- **App test:** `.venv/Scripts/python tests/test_app.py`
+
+## Licence and data
+
+The code is under the MIT licence. The papers are not redistributed: the notebook downloads them from Europe PMC, and
+all of them are CC BY. Values in `eval/`, `samples/` and the cache are short extracts from those papers, cited by DOI.
