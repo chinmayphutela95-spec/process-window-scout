@@ -181,11 +181,16 @@ if records:
                  + (" (default)" if req.get("target_default") else ""))
 
     def window_table(windows):
+        """The windows in numbers, then one plain evidence line per window (8.14): what stands behind it."""
         st.dataframe(pd.DataFrame([{"density method": w["method"], "records": w["records"], "papers": w["papers"],
                                     "P (W)": "{:g} to {:g}".format(*w["power_W"]), "v (mm/s)": "{:g} to {:g}".format(*w["speed_mm_s"]),
-                                    "h (µm)": "{:g} to {:g}".format(*w["hatch_um"]), "records cited": ", ".join(w["cites"]),
+                                    "h (µm)": "{:g} to {:g}".format(*w["hatch_um"]), "review": w.get("review") or "",
+                                    "records cited": ", ".join(w["cites"]),
                                     **({"spot outside your range": w.get("spot_outside", 0)} if rec.get("spot_range") else {})}
                                    for w in windows]), hide_index=True)
+        for w in windows:
+            if w.get("evidence"):                               # runs saved before 20 November have none
+                st.write(f"Evidence, {w['method']}: {nb.evidence_text(w['evidence'])}")
 
     if not rec:
         st.info("No window yet: the run has not reached the window step.")

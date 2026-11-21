@@ -7,7 +7,8 @@ the agents from the notebook, so it is a script and not a notebook cell. Run it 
 2. The Part 11 request is asked back for the grade. After "316L" the run reaches the approval pause, or, when an answer
    is neither cached nor reachable, stops with the plain "needs the model endpoint" message. The short answer of 9.5
    comes before the window tables, every number in it is in those tables, the conflicts or the request line, and the
-   evidence table, the set-aside papers and the conflicts sit in collapsed sections.
+   evidence table, the set-aside papers and the conflicts sit in collapsed sections. Every window has its evidence line,
+   and a thin-evidence flag is named in the approval question and in the answer.
 3. A replayed run reaches approval, and Approve resumes the graph with Command(resume): the decision is in the SQLite
    checkpoint and the power limit in the memory store. If an answer the Analyst needs is missing offline, this part puts
    a stand-in Analyst into the session (the real one would need the endpoint). Everything else is the real graph,
@@ -172,6 +173,13 @@ try:
         check("the short answer comes before the window tables", first)
         check("every number in it is in the window tables, the conflicts or the request line", not unseen)
         check("its caption says who wrote it", any(c.value.startswith(("Written by GLM-5.2", "Written by code")) for c in at.caption))
+        lines = [m.value for m in at.markdown if m.value.startswith("Evidence, ")]
+        check("every window has its evidence line under its table",
+              len(lines) == len(at.dataframe[0].value) and all("Edges:" in x for x in lines))
+        flagged = [x for x in at.dataframe[0].value["review"] if x]
+        check("a thin window is named in the approval question and in the answer",
+              not flagged or ("Thin evidence, needs review" in page_text(at) and "thin evidence" in answer.lower()))
+        print(f"     flagged windows: {len(flagged)}")
         check("the evidence table, the set-aside papers and the conflicts are collapsed sections with their counts",
               all(any(e.label.startswith(t) and e.label.endswith(")") and not e.proto.expanded for e in at.expander)
                   for t in ("Evidence table (", "Set aside: density not clearly reported (", "Conflicts and the Analyst's explanation (")))
@@ -220,6 +228,8 @@ try:
     check("every orientation table names the layer it was measured at and says it is not a recommendation",
           labels and all(re.search(r"measured at \d+ µm, not at your 60 µm, for orientation only, not a recommendation", x) for x in labels))
     check("one row per density method in each orientation table", all(t["density method"].is_unique for t in tables))
+    check("every orientation window has its evidence line",
+          len([m for m in at4.markdown if m.value.startswith("Evidence, ")]) == sum(len(t) for t in tables))
     check("a pycnometry row stops below 1200 mm/s, where L08's two methods disagree",
           all(float(v.split(" to ")[1]) < 1200 for t in tables for m, v in zip(t["density method"], t["v (mm/s)"]) if m == "pycnometry"))
     check("the method-spread pairs next to it show L08 sample 4 at 1200 mm/s, 99.69 against 81.3 %",

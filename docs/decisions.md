@@ -643,6 +643,42 @@ Newest at the bottom. Each entry: date · decision · why. The model-choice log 
   next to the tables. · The node sits after `recommend` and before the approval `interrupt`, so the answer is in the
   state and the checkpoint before I approve. Graphs get it with `writer=` (9.5, Part 11 and the app), 8.11 and 9.1 to
   9.4 run without it. The four demo requests passed on the first try online.
+- **2026-11-20** · Evidence per window and a review trigger (Chinmay's decision, after the 6.1 feedback, code in 8.5,
+  shown in 8.14). A window is a box around the records that reach the target, so it can look narrow only because the
+  papers stop. The rule, exactly: the **peers** of a window are verified, as-built records at the window's layer and
+  density method (samples whose two methods disagree count too, each density was measured). A peer below the target
+  with P, v and hatch all inside the window's ranges is a **failure inside the box**. An edge is **measured** when a
+  peer below the target lies beyond it with its other parameter inside the window's range: low P = P below the lowest
+  P with v inside the v range, high P = P above the highest P with v inside, low v = v below the lowest v with P
+  inside the P range, high v = v above the highest v with P inside. Otherwise the edge is **open**. `records_beyond`
+  counts every peer beyond an edge by the same rule, so open with 0 means no sample was measured there. Hatch is not
+  used for the edges. The evidence is counted on the whole table, also records a power limit cut, because a failure
+  above the limit is still knowledge. A window with fewer than 3 records, or all of them from one paper, gets the flag
+  "thin evidence, needs review": never dropped, named in the approval question, required in the Writer's answer by
+  its code check. · Known weak spots: the 30 µm Archimedes high v edge is measured only by samples at h 60 µm
+  (E06, L06 S8, S9), outside the window's 70 to 120 µm. A sample just below the target counts as a failure: E10
+  sample 11 at 99.4 % makes the 50 µm image-analysis low P edge measured. A sample read from two tables counts twice
+  beyond an edge (L08 sample 13 at 400 mm/s), which never changes measured or open. Machines are not extracted, so
+  diversity is counted in papers and density methods only.
+- **2026-11-20** · Test with contradictory but valid sources (8.12): two made-up verified, comparable records from two
+  papers 3.1 points apart, whose notes name different machines and powders, and a control pair with no stated
+  difference. Run through the real Coordinator nodes in a small graph with a scripted Analyst, so the test is the same
+  offline. Both pairs are conflicts and reach the Analyst, no record is downgraded or dropped, the records that reach
+  the target still set the window, and the approval pause now lists the conflicts (`conflicts` in the interrupt).
+- **2026-11-20** · Acceptance thresholds before use (Chinmay's, 10.9): extraction precision at least 0.95, recall at
+  least 0.85, planted errors caught 100 %, false alarms on correct records at most 2 %, window and answer numbers
+  traced 100 %, density agreement with the independent reference at least 95 % of matched rows. All computed in code
+  from the results above. False alarms are shown twice. (a) The column check of 6.4 on all 134 v2 first-attempt records,
+  the "0 of 134" of Checkpoint 6.1. (b) Any check on the first-attempt records my key confirms in full (power, speed,
+  hatch, layer and density all given and right), 62 records: with "the fields the key gives" instead, L09's literature
+  rows [31] and [33], whose key leaves the ranges blank, counted as false alarms although the Checker was right to stop
+  them (a hatch of 10 µm read from "10 to 50", a printed energy density that does not match P/(v·h·t)). Escalation on
+  the five demo requests is counted per cause (asked back before searching, orientation only, thin evidence on the
+  headline window) and in total, with no threshold. A thin window of a second method is shown with its flag but does
+  not escalate the request. The demo requests were built incomplete on purpose (four ask back), so a band needs a
+  supervised pilot. Scope criteria (10.10, future work): a hand-checked key
+  for a new alloy meeting the same thresholds, at least 3 papers from at least 2 machines per layer, and a physical
+  build trial by an engineer before use.
 
 ## Model-choice log
 | Date | Role | Candidates | Result | Choice |
