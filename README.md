@@ -3,11 +3,7 @@
 A multi-agent research assistant that proposes **laser process windows for metal 3D printing (PBF-LB)** from the
 open-access literature, shows the evidence behind every number, and leaves the decision to the engineer.
 
-**Video:** *(link added at submission)* · **Final report:** *(PDF, added at submission)* ·
-**Checkpoints:** [`checkpoints/`](checkpoints/)
-
-Capstone project for the Carnegie Mellon University School of Computer Science Executive Education course on agentic
-AI systems (2026). Project type: Research Assistant.
+Project type: Research Assistant.
 
 ## The problem and the user
 
@@ -140,7 +136,7 @@ Other comparisons in notebook Part 10:
 
 ## How to run it
 
-Tested on Windows 11 with Python 3.13.
+Tested on Windows 11 with Python 3.13. Model = GLM 5.2 (hosted on prem at my organisation)
 
 ```bash
 git clone https://github.com/chinmayphutela95-spec/process-window-scout.git
@@ -162,7 +158,3 @@ python -m venv .venv
 I tested these steps on a fresh clone with no `.env`, no saved data and no downloaded model. The notebook finished
 with no errors, and all 650 model calls were replayed from the cache.
 
-## Licence and data
-
-The code is under the MIT licence. The papers are not redistributed: the notebook downloads them from Europe PMC, and
-all of them are CC BY. Values in `eval/`, `samples/` and the cache are short extracts from those papers, cited by DOI.
