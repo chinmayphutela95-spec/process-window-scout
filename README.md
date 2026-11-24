@@ -5,6 +5,9 @@ open-access literature, shows the evidence behind every number, and leaves the d
 
 Project type: Research Assistant.
 
+## Note for CMU:
+I kept building the notebook as the course progressed and design evolved and in the end let Claude edit and organise it. Did not create a clean version for the submission and kept the notebook open with all the submission for me to keep track of thinking evolution later also. I hope that is acceptable for code submission. 
+
 ## The problem and the user
 
 Before a new alloy or machine goes into production, a process engineer needs a starting window: laser power, scan
