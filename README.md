@@ -21,9 +21,11 @@ checked by code, and it says plainly when the evidence is thin or when no paper 
 *"316L, 30 µm layers, relative density above 99.5 %"*
 
 1. **Clarify (code).** If the alloy grade, layer thickness or machine power is missing, the agent asks before it
-   searches.
-2. **Read (GLM-5.2, in parallel).** One Reader per table or text section of 23 CC BY papers on 316L extracts power,
-   speed, hatch, layer, spot, density, density method and sample condition, each with the passage it came from.
+   searches. The grade question offers only the grades the library has papers on.
+2. **Choose and read (code, then GLM-5.2 in parallel).** The Coordinator picks only the papers labelled with the
+   requested grade. If the library has none, the run ends there with a plain answer and no paper is read. One Reader
+   per table or text section of the chosen papers (today 23 CC BY papers on 316L) extracts power, speed, hatch, layer,
+   spot, density, density method and sample condition, each with the passage it came from.
 3. **Check (code).** 17 checks per record: the value is in its cited passage, in the right row and column, one sample
    keeps one parameter set across tables, the condition matches the sample label, units and energy density are
    plausible. A failed record goes back to its Reader once, with the reason, then stays "not verified".
@@ -43,13 +45,13 @@ checked by code, and it says plainly when the evidence is thin or when no paper 
 
 ## Architecture
 
-![Architecture](docs/architecture.png)
+![Architecture](architecture.png)
 
 One LangGraph state graph. Grey nodes are plain code, blue nodes call the model, orange nodes are the engineer. The
 state (the evidence table and every decision) is saved after each step in a SQLite checkpointer, so a paused run can be
 resumed later. Machine limits live in a LangGraph store. Every model call is traced with its prompt, reasoning, tokens
-and time, and cached so that runs can be replayed. Design decisions and the model-choice log are in
-[`docs/decisions.md`](docs/decisions.md).
+and time, and cached so that runs can be replayed. The rules table at the top of the notebook lists every design
+decision with the date it was made.
 
 | Component | Built with |
 |---|---|
@@ -64,7 +66,7 @@ and time, and cached so that runs can be replayed. Design decisions and the mode
 ## Evaluation
 
 I checked extraction against an answer key of 93 values from 10 papers. Another model (Claude) pre-filled the key
-from the papers only, and I checked every row against the paper (see [`eval/README.md`](eval/README.md)). Seven newer
+from the papers only, and I checked every row against the paper (the key is in [`eval/`](eval/)). Seven newer
 papers were compared with an independent reference written the same way. Notebook 10.9 states the thresholds a
 deployment would have to meet:
 
@@ -113,7 +115,8 @@ Other comparisons in notebook Part 10:
 ## How to review this repository
 
 - **Notebook:** [`notebooks/process_window_scout.ipynb`](notebooks/process_window_scout.ipynb) holds the whole system,
-  built and tested Part by Part, with all outputs saved:
+  built and tested Part by Part, with all outputs saved. The file is large, so if GitHub does not display it, open it
+  in [nbviewer](https://nbviewer.org/github/chinmayphutela95-spec/process-window-scout/blob/main/notebooks/process_window_scout.ipynb):
 
   | Part | What it covers |
   |---|---|
@@ -134,8 +137,6 @@ Other comparisons in notebook Part 10:
 - **Samples:** [`samples/`](samples/) holds every extracted record with its check status, and the trace of the
   end-to-end demo.
 - **Evaluation:** [`eval/`](eval/) holds the answer key and the independent reference.
-- **Design records:** [`docs/`](docs/) holds the design decisions, the capability ledger (each checkpoint promise and
-  its evidence) and the notebook outline.
 
 ## How to run it
 
